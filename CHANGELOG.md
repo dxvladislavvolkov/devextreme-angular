@@ -4,6 +4,7 @@
 
 - Fixed validation of custom editors
 
+<<<<<<< HEAD
 ## 17.1.3 (2017-05-15)
 
 ### Features
@@ -26,6 +27,8 @@
 - Fix firing onValueChanged event several times on change value option
 - Fix watcher for values of the date type ([8a8355b](https://github.com/DevExpress/devextreme-angular/commit/8a8355bbcf833a01f494effe7d8c7f7ad452f523))
 
+=======
+>>>>>>> 59cdb242df79a05e0fec4fa9b61ad4471f83efb7
 ## 16.2.6 (2017-03-29)
 
 - Release a stable version with Angular 4 support

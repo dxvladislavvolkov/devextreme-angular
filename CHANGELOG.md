@@ -1,10 +1,35 @@
-## Unreleased
+## 17.1.7-rc.1 (2017-09-11)
 
 ### Bug Fixes
 
-- Fixed validation of custom editors
+[Open the list of closed bugs](https://github.com/DevExpress/devextreme-angular/milestone/21?closed=1)
 
-<<<<<<< HEAD
+## 17.1.6 (2017-09-06)
+
+### Bug Fixes
+
+[Open the list of closed bugs](https://github.com/DevExpress/devextreme-angular/milestone/20?closed=1)
+
+### Features
+
+- An `index` has been added to the context object of the `dxTemplate` directive for collection widgets ([#523](https://github.com/DevExpress/devextreme-angular/commit/7f0c72b5e02960b4b4e89e5c4fb64be0cb8adbe0))
+
+## 17.1.5 (2017-08-02)
+
+- Release a stable version of `devextreme-angular`
+
+## 17.1.5-rc.1 (2017-07-27)
+
+### Bug Fixes
+
+[Open the list of closed bugs](https://github.com/DevExpress/devextreme-angular/milestone/18?closed=1)
+
+## 17.1.4 (2017-06-29)
+
+### Bug Fixes
+
+[Open the list of closed bugs](https://github.com/DevExpress/devextreme-angular/milestone/16?closed=1)
+
 ## 17.1.3 (2017-05-15)
 
 ### Features
@@ -27,8 +52,6 @@
 - Fix firing onValueChanged event several times on change value option
 - Fix watcher for values of the date type ([8a8355b](https://github.com/DevExpress/devextreme-angular/commit/8a8355bbcf833a01f494effe7d8c7f7ad452f523))
 
-=======
->>>>>>> 59cdb242df79a05e0fec4fa9b61ad4471f83efb7
 ## 16.2.6 (2017-03-29)
 
 - Release a stable version with Angular 4 support

@@ -2,7 +2,8 @@ import {
     ElementRef,
     NgZone,
     QueryList,
-    AfterViewInit
+    AfterViewInit,
+    AfterContentChecked
 } from '@angular/core';
 
 import { DxTemplateDirective } from './template';
@@ -16,8 +17,8 @@ import {
     CollectionNestedOptionContainerImpl
 } from './nested-option';
 
-export abstract class DxComponent implements AfterViewInit, INestedOptionContainer, ICollectionNestedOptionContainer {
-    private _initialOptions: any;
+export abstract class DxComponent implements AfterViewInit, AfterContentChecked, INestedOptionContainer, ICollectionNestedOptionContainer {
+    private _optionToUpdate: any = {};
     private _collectionContainerImpl: ICollectionNestedOptionContainer;
     eventHelper: EmitterHelper;
     templates: DxTemplateDirective[];
@@ -33,22 +34,16 @@ export abstract class DxComponent implements AfterViewInit, INestedOptionContain
             this.templates.forEach(template => {
                 initialTemplates[template.name] = template;
             });
-            this._initialOptions.integrationOptions.templates = initialTemplates;
+            this._optionToUpdate.integrationOptions.templates = initialTemplates;
         }
     }
     private _initOptions() {
-        this._initialOptions.eventsStrategy = this.eventHelper.strategy;
-        this._initialOptions.integrationOptions.watchMethod = this.watcherHelper.getWatchMethod();
+        this._optionToUpdate.eventsStrategy = this.eventHelper.strategy;
+        this._optionToUpdate.integrationOptions.watchMethod = this.watcherHelper.getWatchMethod();
     }
     protected _createEventEmitters(events) {
         events.forEach(event => {
             this.eventHelper.createEmitter(event.emit, event.subscribe);
-        });
-    }
-    private _initEvents() {
-        this.instance.on('optionChanged', e => {
-            this.changedOptions[e.name] = e.value;
-            this.eventHelper.fireNgEvent(e.name + 'Change', [e.value]);
         });
     }
     _shouldOptionChange(name: string, value: any) {
@@ -61,30 +56,48 @@ export abstract class DxComponent implements AfterViewInit, INestedOptionContain
         return true;
     }
     protected _getOption(name: string) {
-        if (this.instance) {
-            return this.instance.option(name);
-        } else {
-            return this._initialOptions[name];
-        }
+        return this.instance ?
+            this.instance.option(name) :
+            this._optionToUpdate[name];
     }
     protected _setOption(name: string, value: any) {
-        if (this.instance) {
-            this._updateOption(name, value);
-        } else {
-            this._initialOptions[name] = value;
-        }
-    }
-    protected _updateOption(name: string, value: any) {
         if (this._shouldOptionChange(name, value)) {
-            this.instance.option(name, value);
+            this._optionToUpdate[name] = value;
         };
     }
     protected abstract _createInstance(element, options)
     protected _createWidget(element: any) {
+        let events = [];
+
+        this._optionToUpdate.integrationOptions = {};
         this._initTemplates();
         this._initOptions();
-        this.instance = this._createInstance(element, this._initialOptions);
-        this._initEvents();
+
+        let optionChangeHandler = function(e) {
+            events.push(e.name);
+        };
+
+        this._optionToUpdate.onInitializing = function() {
+            this.on('optionChanged', optionChangeHandler);
+        };
+        this.instance = this._createInstance(element, this._optionToUpdate);
+        this._optionToUpdate = {};
+
+        this.instance.off('optionChanged', optionChangeHandler);
+        this.instance.on('optionChanged', (e) => {
+            this.changedOptions[e.name] = e.value;
+            this.eventHelper.fireNgEvent(e.name + 'Change', [e.value]);
+        });
+
+        let subsriber = this.ngZone.onStable.subscribe(() => {
+            subsriber.unsubscribe();
+
+            this.ngZone.run(() => {
+                events.forEach(name => {
+                    this.eventHelper.fireNgEvent(name + 'Change', [this[name]]);
+                });
+            });
+        });
     }
     protected _destroyWidget() {
         if (this.instance) {
@@ -93,12 +106,17 @@ export abstract class DxComponent implements AfterViewInit, INestedOptionContain
             element.remove();
         }
     }
-    constructor(protected element: ElementRef, ngZone: NgZone, templateHost: DxTemplateHost, private watcherHelper: WatcherHelper) {
-        this._initialOptions = { integrationOptions: {} };
+    constructor(protected element: ElementRef, private ngZone: NgZone, templateHost: DxTemplateHost, private watcherHelper: WatcherHelper) {
         this.templates = [];
         templateHost.setHost(this);
         this._collectionContainerImpl = new CollectionNestedOptionContainerImpl(this._setOption.bind(this));
-        this.eventHelper = new EmitterHelper(ngZone, this);
+        this.eventHelper = new EmitterHelper(this.ngZone, this);
+    }
+    ngAfterContentChecked() {
+        if (this.instance && Object.keys(this._optionToUpdate).length) {
+            this.instance.option(this._optionToUpdate);
+            this._optionToUpdate = {};
+        }
     }
     ngAfterViewInit() {
         if (this.renderOnViewInit) {

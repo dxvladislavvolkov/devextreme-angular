@@ -223,8 +223,8 @@ of the dxList widget as follows:
 
 ```html
 <dx-list [grouped]="true" [items]="grouppedItems">
-    <div *dxTemplate="let itemData of 'item'">
-        {{itemData.someProperty}}
+    <div *dxTemplate="let itemData of 'item'; let itemIndex = index">
+        {{itemIndex}} - {{itemData.someProperty}}
     </div>
     <div *dxTemplate="let groupData of 'group'">
         {{groupData.someProperty}}
@@ -297,13 +297,8 @@ export class AppComponent implements OnInit {
 
 ### <a name="devextreme-validation-features"></a>Using DevExtreme Validation Features ###
 
-<<<<<<< HEAD
 You can use the [built-in validators](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxValidator/Validation_Rules/),
 validation summary and other DevExtreme validation features with Angular DevExtreme editors.
-=======
-You can use the [built-in validators](https://js.devexpress.com/Documentation/16_2/ApiReference/UI_Widgets/dxValidator/Validation_Rules/),
-validation summary and other DevExtreme validation features with Angular 2 DevExtreme editors.
->>>>>>> 59cdb242df79a05e0fec4fa9b61ad4471f83efb7
 
 
 ```html
@@ -429,11 +424,7 @@ export class AppComponent {
 
 It is possible to specify an item template inside the `dxi-` prefixed components and use Angular
 [structural directives](https://angular.io/docs/ts/latest/guide/structural-directives.html) such as ngFor. Note that
-<<<<<<< HEAD
 the available item properties are described in the [Default Item Template](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxList/Default_Item_Template/)
-=======
-the available item properties are described in the [Default Item Template](https://js.devexpress.com/Documentation/16_2/ApiReference/UI_Widgets/dxList/Default_Item_Template/)
->>>>>>> 59cdb242df79a05e0fec4fa9b61ad4471f83efb7
 section of a corresponding widget documentation reference.
 
 ```html
@@ -471,16 +462,15 @@ Angular has a built-in `template` directive. To define the `template` property o
 <dxo-master-detail [template]="'masterDetail'"></dxo-master-detail>
 ```
 
-Note that some options with an object type are not implemented as nested components - for example, 
-[editorOtions of dxDataGrid](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxDataGrid/Configuration/columns/#editorOptions), [editorOtions of dxForm](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxForm/Item_Types/SimpleItem/#editorOptions), [the widget option of dxToolbar](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxToolbar/Default_Item_Template/#options).
+Note that some options with an object type are not implemented as nested components - for example,
+[editorOptions of dxDataGrid](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxDataGrid/Configuration/columns/#editorOptions), [editorOptions of dxForm](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxForm/Item_Types/SimpleItem/#editorOptions), [the widget option of dxToolbar](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxToolbar/Default_Item_Template/#options).
 
 ### <a name="accessing-widget-instance"></a>Accessing a DevExtreme Widget Instance ###
 
-You can access a DevExtreme widget instance by using the Angular component query syntax and the component's
-'instance' property. In the example below, the
-[refresh](https://js.devexpress.com/Documentation/16_2/ApiReference/UI_Widgets/dxDataGrid/Methods/#refresh)
+You can access a DevExtreme widget instance using the `@ViewChild` or `@ViewChildren` decorator (depending on whether you are getting just one or several instances of one widget) and the component's
+'instance' property. Both decorators accept a component name or a [template reference variable](https://angular.io/guide/template-syntax#template-reference-variables--var-). In the example below, the
+[refresh](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxDataGrid/Methods/#refresh)
 method of the dxDataGrid is called:
-
 
 ```js
 import { Component, ViewChild } from '@angular/core';
@@ -489,20 +479,21 @@ import { DxDataGridComponent } from "devextreme-angular";
 @Component({
     selector: 'my-app',
     template: `
-        <dx-data-grid [dataSource]="dataSource"></dx-data-grid>
+        <dx-data-grid #targetDataGrid [dataSource]="dataSource"></dx-data-grid>
         <dx-button text="Refresh data" (onClick)="refresh()"></dx-button>
     `
 })
 export class AppComponent implements OnChanges {
     @ViewChild(DxDataGridComponent) dataGrid:DxDataGridComponent
+    // or
+    // @ViewChild("targetDataGrid") dataGrid: DxDataGridComponent
     refresh() {
         this.dataGrid.instance.refresh();
     }
 }
 ```
 
-To access a DevExtreme widget instance in markup, you can use [template reference variables](https://angular.io/docs/ts/latest/guide/template-syntax.html#!#ref-vars).
-The following example demonstrates how you can get a dxSelectBox value in the template.
+To access a DevExtreme widget instance in markup, you can use the same template reference variables. The following example demonstrates how you can get a dxSelectBox value in the template.
 
 ```html
 <dx-select-box #selectbox [items]="items"></dx-select-box>
@@ -533,15 +524,9 @@ import {Component, ChangeDetectionStrategy} from '@angular/core';
 
 ## <a name="api-reference"></a>API Reference ##
 
-<<<<<<< HEAD
 DevExtreme Angular components mirror
 [DevExtreme JavaScript API](http://js.devexpress.com/Documentation/ApiReference/) but use
 [Angular syntax](#usage-samples) for specifying widget options, subscribing to events and custom templates declaration.
-=======
-DevExtreme Angular 2 components mirror
-[DevExtreme JavaScript API](http://js.devexpress.com/Documentation/16_2/ApiReference/) but use
-[Angular 2 syntax](#usage-samples) for specifying widget options, subscribing to events and custom templates declaration.
->>>>>>> 59cdb242df79a05e0fec4fa9b61ad4471f83efb7
 
 ## <a name="bundle-optimization"></a>Bundle Size Optimization ##
 

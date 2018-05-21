@@ -2,18 +2,16 @@ var gulp = require('gulp');
 var runSequence = require("run-sequence");
 var path = require('path');
 var typescript = require('gulp-typescript');
-var tsc = require('typescript');
 var tslint = require('gulp-tslint');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
+var replace = require('gulp-replace');
 var shell = require('gulp-shell');
 var sourcemaps = require('gulp-sourcemaps');
 var jasmine = require('gulp-jasmine');
 var jasmineReporters = require('jasmine-reporters');
 var del = require('del');
-var merge = require('merge-stream');
 var mergeJson = require('gulp-merge-json');
 var karmaServer = require('karma').Server;
+var karmaConfig = require('karma').config;
 var buildConfig = require('./build.config');
 var header = require('gulp-header');
 var fs = require('fs');
@@ -60,10 +58,9 @@ gulp.task('generate.metadata', ['build.tools', 'clean.metadata'], function () {
 
 gulp.task('clean.generatedComponents', function () {
     var outputFolderPath = buildConfig.tools.componentGenerator.outputFolderPath;
-
-    return del([outputFolderPath]);
+    
+    return del([outputFolderPath + "/**/*.*"]);
 });
-
 
 gulp.task('generate.components', ['generate.metadata', 'clean.generatedComponents'], function () {
     var DoTGenerator = require(buildConfig.tools.componentGenerator.importFrom).default,
@@ -73,15 +70,15 @@ gulp.task('generate.components', ['generate.metadata', 'clean.generatedComponent
 });
 
 gulp.task('generate.moduleFacades', ['generate.components'], function () {
-    var ModuleFacadeGenerator = require(buildConfig.tools.moduleFacadeGenerator.importFrom).default;
-    moduleFacadeGenerator = new ModuleFacadeGenerator();
+    var ModuleFacadeGenerator = require(buildConfig.tools.moduleFacadeGenerator.importFrom).default,
+        moduleFacadeGenerator = new ModuleFacadeGenerator();
 
     moduleFacadeGenerator.generate(buildConfig.tools.moduleFacadeGenerator);
 });
 
 gulp.task('generate.facades', ['generate.moduleFacades'], function () {
-    var FacadeGenerator = require(buildConfig.tools.facadeGenerator.importFrom).default;
-    facadeGenerator = new FacadeGenerator();
+    var FacadeGenerator = require(buildConfig.tools.facadeGenerator.importFrom).default,
+        facadeGenerator = new FacadeGenerator();
 
     facadeGenerator.generate(buildConfig.tools.facadeGenerator);
 });
@@ -118,6 +115,7 @@ gulp.task('build.license-headers', function() {
 });
 
 gulp.task('clean.dist', function () {
+    del.sync([buildConfig.components.outputPath + "/*.*"]);
     return del([buildConfig.components.outputPath]);
 });
 
@@ -137,6 +135,15 @@ gulp.task('build.copy-sources', ['clean.dist'], function() {
 
 });
 
+// Note: workaround for https://github.com/angular/angular-cli/issues/4874
+gulp.task('build.remove-unusable-variable', function() {
+    var config = buildConfig.components;
+
+    return gulp.src(path.join(config.outputPath, '**/*.js'))
+        .pipe(replace(/var.+devextreme\/bundles\/dx\.all.+/g, ''))
+        .pipe(gulp.dest(config.outputPath));
+});
+
 gulp.task('build.checkMetadata', function(done) {
     if(fs.existsSync(path.resolve(buildConfig.components.outputPath, 'index.metadata.json'))) {
         done();
@@ -150,6 +157,7 @@ gulp.task('build.components', ['generate.facades'], function(done) {
         'build.copy-sources',
         'build.license-headers',
         'build.ngc',
+        'build.remove-unusable-variable',
         'build.checkMetadata',
         done
     );
@@ -217,7 +225,7 @@ gulp.task('clean.tests', function () {
     return del([outputFolderPath]);
 });
 
-gulp.task('build.tests', ['clean.tests'], function() {
+gulp.task('build.tests', ['clean.tests', 'generate-component-names'], function() {
     var config = buildConfig.components,
         testConfig = buildConfig.tests;
 
@@ -232,18 +240,53 @@ gulp.task('watch.spec', function() {
     gulp.watch(buildConfig.components.tsTestSrc, ['build.tests']);
 });
 
+var getKarmaConfig = function(testsPath) {
+    const preprocessors = {};
+    preprocessors[testsPath] = [ 'webpack' ];
+    return karmaConfig.parseConfig(path.resolve('./karma.conf.js'), { 
+        files: [{ pattern: testsPath, watched: false }],
+        preprocessors: preprocessors
+    });
+};
+
 gulp.task('test.components', function(done) {
-    new karmaServer({
-        configFile: __dirname + '/karma.conf.js'
-    }, done).start();
+    runSequence(
+        'test.components.server',
+        'test.components.client',
+        done);
 });
 
-gulp.task('test.components.debug', function(done) {
-    new karmaServer({
-        configFile: __dirname + '/karma.conf.js',
-        browsers: [ 'Chrome' ],
-        singleRun: false
-    }, done).start();
+gulp.task('test.components.client', ['build.tests'], function(done) {
+    new karmaServer(getKarmaConfig('./karma.test.shim.js'), done).start();
+});
+
+gulp.task('generate-component-names', ['build.tools'], function(done) {
+    var ComponentNamesGenerator = require(buildConfig.tools.componentNamesGenerator.importFrom).default;
+    var generator = new ComponentNamesGenerator(buildConfig.tools.componentNamesGenerator);
+
+    generator.generate();
+
+    done();
+});
+
+gulp.task('test.components.server', ['build.tests'], function(done) {
+    new karmaServer(getKarmaConfig('./karma.server.test.shim.js'), done).start();
+});
+
+gulp.task('test.components.client.debug', function(done) {
+    var config = getKarmaConfig('./karma.test.shim.js');
+    config.browsers = [ 'Chrome' ];
+    config.singleRun = false;
+
+    new karmaServer(config, done).start();
+});
+
+gulp.task('test.components.server.debug', function(done) {
+    var config = getKarmaConfig('./karma.server.test.shim.js');
+    config.browsers = [ 'Chrome' ];
+    config.singleRun = false;
+
+    new karmaServer(config, done).start();
 });
 
 gulp.task('test.tools', function(done) {

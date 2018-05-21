@@ -4,18 +4,22 @@ import {
     Component,
     ElementRef,
     EventEmitter,
-    ViewChildren,
+    ViewChild,
     NgZone,
     Input,
     Output,
-    QueryList,
-    AfterViewInit,
-    OnDestroy
+    OnDestroy,
+    PLATFORM_ID,
+    Inject
 } from '@angular/core';
+
+import { TransferState } from '@angular/platform-browser';
+import { BrowserTransferStateModule } from '@angular/platform-browser';
 
 import {
     TestBed,
-    async
+    ComponentFixture,
+    ComponentFixtureAutoDetect
 } from '@angular/core/testing';
 
 import {
@@ -29,8 +33,13 @@ import DxButton from 'devextreme/ui/button';
 let DxTestWidget = DxButton['inherit']({
     _render() {
         this.callBase();
-        this.element()[0].classList.add('dx-test-widget');
-        this.option('testCalculatedOption', 'changed');
+        this.element().classList.add('dx-test-widget');
+    }
+});
+
+DxTestWidget.defaultOptions({
+    options: {
+        text: 'test text'
     }
 });
 
@@ -39,7 +48,7 @@ let DxTestWidget = DxButton['inherit']({
     template: '',
     providers: [DxTemplateHost, WatcherHelper]
 })
-export class DxTestWidgetComponent extends DxComponent implements AfterViewInit, OnDestroy {
+export class DxTestWidgetComponent extends DxComponent implements OnDestroy {
     @Input()
     get testOption(): any {
         return this._getOption('testOption');
@@ -48,11 +57,11 @@ export class DxTestWidgetComponent extends DxComponent implements AfterViewInit,
         this._setOption('testOption', value);
     };
     @Input()
-    get testCalculatedOption(): any {
-        return this._getOption('testCalculatedOption');
+    get text(): any {
+        return this._getOption('text');
     }
-    set testCalculatedOption(value: any) {
-        this._setOption('testCalculatedOption', value);
+    set text(value: any) {
+        this._setOption('text', value);
     };
 
     @Output() onOptionChanged = new EventEmitter<any>();
@@ -60,10 +69,15 @@ export class DxTestWidgetComponent extends DxComponent implements AfterViewInit,
     @Output() onDisposing = new EventEmitter<any>();
     @Output() onContentReady = new EventEmitter<any>();
     @Output() testOptionChange = new EventEmitter<any>();
-    @Output() testCalculatedOptionChange = new EventEmitter<any>();
+    @Output() textChange = new EventEmitter<any>();
 
-    constructor(elementRef: ElementRef, ngZone: NgZone, templateHost: DxTemplateHost, _watcherHelper: WatcherHelper) {
-        super(elementRef, ngZone, templateHost, _watcherHelper);
+    constructor(elementRef: ElementRef,
+        ngZone: NgZone,
+        templateHost: DxTemplateHost,
+        _watcherHelper: WatcherHelper,
+         transferState: TransferState,
+        @Inject(PLATFORM_ID) platformId: any) {
+        super(elementRef, ngZone, templateHost, _watcherHelper, transferState, platformId);
 
         this._createEventEmitters([
             { subscribe: 'optionChanged', emit: 'onOptionChanged' },
@@ -71,16 +85,12 @@ export class DxTestWidgetComponent extends DxComponent implements AfterViewInit,
             { subscribe: 'disposing', emit: 'onDisposing' },
             { subscribe: 'contentReady', emit: 'onContentReady' },
             { emit: 'testOptionChange' },
-            { emit: 'testCalculatedOptionChange' }
+            { emit: 'textChange' }
         ]);
     }
 
     protected _createInstance(element, options) {
         return new DxTestWidget(element, options);
-    }
-
-    ngAfterViewInit() {
-        this._createWidget(this.element.nativeElement);
     }
 
     ngOnDestroy() {
@@ -95,9 +105,16 @@ export class DxTestWidgetComponent extends DxComponent implements AfterViewInit,
 export class TestContainerComponent {
     visible = true;
     testOption: string;
-    testCalculatedOption = 'initial';
+    onStableCallCount = 0;
 
-    @ViewChildren(DxTestWidgetComponent) innerWidgets: QueryList<DxTestWidgetComponent>;
+    @ViewChild(DxTestWidgetComponent) innerWidget: DxTestWidgetComponent;
+
+    constructor(ngZone: NgZone) {
+        ngZone.onStable.subscribe(() => {
+            this.onStableCallCount++;
+        });
+    }
+
     testMethod() {
     }
 }
@@ -108,17 +125,17 @@ describe('DevExtreme Angular widget', () => {
     beforeEach(() => {
         TestBed.configureTestingModule(
             {
+                imports: [BrowserTransferStateModule],
                 declarations: [TestContainerComponent, DxTestWidgetComponent]
             });
     });
 
-    function getWidget(fixture) {
-        let widgetElement = fixture.nativeElement.querySelector('.dx-test-widget') || fixture.nativeElement;
-        return DxTestWidget.getInstance(widgetElement);
+    function getWidget(fixture: ComponentFixture<TestContainerComponent>) {
+        return fixture.componentInstance.innerWidget.instance;
     }
 
     // spec
-    it('should be rendered', async(() => {
+    it('should be rendered', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: '<dx-test-widget [testOption]="\'Test Value\'" > </dx-test-widget>'
@@ -127,13 +144,12 @@ describe('DevExtreme Angular widget', () => {
         let fixture = TestBed.createComponent(TestContainerComponent);
         fixture.detectChanges();
 
-        let element = getWidget(fixture).element().get(0);
+        let element = getWidget(fixture).element();
 
         expect(element.classList).toContain('dx-test-widget');
+    });
 
-    }));
-
-    it('should be disposed', async(() => {
+    it('should be disposed', () => {
         let testSpy = spyOn(TestContainerComponent.prototype, 'testMethod');
 
         TestBed.overrideComponent(TestContainerComponent, {
@@ -148,9 +164,9 @@ describe('DevExtreme Angular widget', () => {
         fixture.detectChanges();
 
         expect(testSpy).toHaveBeenCalledTimes(1);
-    }));
+    });
 
-    it('should set testOption value to insatnce', async(() => {
+    it('should set testOption value to insatnce', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: '<dx-test-widget [testOption]="\'Test Value\'" > </dx-test-widget>'
@@ -160,15 +176,14 @@ describe('DevExtreme Angular widget', () => {
         fixture.detectChanges();
 
         let outerComponent = fixture.componentInstance,
-            innerComponent = outerComponent.innerWidgets.first,
+            innerComponent = outerComponent.innerWidget,
             instance = getWidget(fixture);
 
         expect(instance.option('testOption')).toBe('Test Value');
         expect(innerComponent.testOption).toBe('Test Value');
+    });
 
-    }));
-
-    it('should emit testOptionChange event', async(() => {
+    it('should emit testOptionChange event', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: '<dx-test-widget [testOption]="\'Test Value\'" (testOptionChange)="testMethod()"></dx-test-widget>'
@@ -184,21 +199,20 @@ describe('DevExtreme Angular widget', () => {
         instance.option('testOption', 'new value');
         fixture.detectChanges();
         expect(testSpy).toHaveBeenCalledTimes(1);
-    }));
+    });
 
-    it('should change component option value', async(() => {
+    it('should change component option value', () => {
         let fixture = TestBed.createComponent(DxTestWidgetComponent);
         fixture.detectChanges();
 
         let component = fixture.componentInstance,
-            instance = getWidget(fixture);
+            instance = component.instance;
 
         instance.option('testOption', 'Changed');
         expect(component.testOption).toBe('Changed');
+    });
 
-    }));
-
-    it('should change instance option value', async(() => {
+    it('should change instance option value', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: '<dx-test-widget [testOption]="testOption"></dx-test-widget>'
@@ -213,10 +227,9 @@ describe('DevExtreme Angular widget', () => {
         testComponent.testOption = 'Changed 2';
         fixture.detectChanges();
         expect(instance.option('testOption')).toBe('Changed 2');
+    });
 
-    }));
-
-    it('should change instance option value by component option setter', async(() => {
+    it('should change instance option value by component option setter', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: '<dx-test-widget [testOption]="testOption"></dx-test-widget>'
@@ -225,16 +238,15 @@ describe('DevExtreme Angular widget', () => {
         let fixture = TestBed.createComponent(TestContainerComponent);
         fixture.detectChanges();
 
-        let testComponent = fixture.componentInstance.innerWidgets.first,
+        let testComponent = fixture.componentInstance.innerWidget,
             instance = getWidget(fixture);
 
         testComponent.testOption = 'Changed 2';
         fixture.detectChanges();
         expect(instance.option('testOption')).toBe('Changed 2');
+    });
 
-    }));
-
-    it('should fire optionChanged event', async(() => {
+    it('should fire optionChanged event', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: '<dx-test-widget [testOption]="testOption" (onOptionChanged)="testMethod()"></dx-test-widget>'
@@ -251,10 +263,9 @@ describe('DevExtreme Angular widget', () => {
         fixture.detectChanges();
         expect(instance.option('testOption')).toBe('Changed 2');
         expect(testSpy).toHaveBeenCalledTimes(1);
+    });
 
-    }));
-
-    it('should fire onInitialized event', async(() => {
+    it('should fire onInitialized event', () => {
         let testSpy = spyOn(TestContainerComponent.prototype, 'testMethod');
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
@@ -265,10 +276,9 @@ describe('DevExtreme Angular widget', () => {
         let fixture = TestBed.createComponent(TestContainerComponent);
         fixture.detectChanges();
         expect(testSpy).toHaveBeenCalledTimes(1);
+    });
 
-    }));
-
-    it('should fire onContentReady event', async(() => {
+    it('should fire onContentReady event', () => {
         let testSpy = spyOn(TestContainerComponent.prototype, 'testMethod');
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
@@ -279,10 +289,9 @@ describe('DevExtreme Angular widget', () => {
         let fixture = TestBed.createComponent(TestContainerComponent);
         fixture.detectChanges();
         expect(testSpy).toHaveBeenCalledTimes(1);
+    });
 
-    }));
-
-    it('should unsubscribe events', async(() => {
+    it('should unsubscribe events', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: '<dx-test-widget></dx-test-widget>'
@@ -302,9 +311,9 @@ describe('DevExtreme Angular widget', () => {
         fixture.detectChanges();
 
         expect(spy).toHaveBeenCalledTimes(0);
-    }));
+    });
 
-    it('should unsubscribe all events', async(() => {
+    it('should unsubscribe all events', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: '<dx-test-widget></dx-test-widget>'
@@ -324,9 +333,9 @@ describe('DevExtreme Angular widget', () => {
         fixture.detectChanges();
 
         expect(spy).toHaveBeenCalledTimes(0);
-    }));
+    });
 
-    it('should have correct context in events', async(() => {
+    it('should have correct context in events', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: '<dx-test-widget></dx-test-widget>'
@@ -342,9 +351,9 @@ describe('DevExtreme Angular widget', () => {
             expect(this).toBe(instance);
         });
         instance.option('testOption', 'new value');
-    }));
+    });
 
-    it('should fire unknown subscribed events', async(() => {
+    it('should fire unknown subscribed events', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: '<dx-test-widget></dx-test-widget>'
@@ -360,20 +369,50 @@ describe('DevExtreme Angular widget', () => {
             expect(this).toBe(instance);
         });
         instance.fireEvent('unknownEvent');
-    }));
+    });
 
-    it('should detect option changes when option was changed on DX widget creation (T527596)', async(() => {
+    it('ngZone onStable should not called recursively (T551347)', () => {
+        TestBed.configureTestingModule(
+        {
+            declarations: [ TestContainerComponent, DxTestWidgetComponent ],
+            providers: [{ provide: ComponentFixtureAutoDetect, useValue: true }]
+        });
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
-                template: '<dx-test-widget [(testCalculatedOption)]="testCalculatedOption"></dx-test-widget>'
+                template: `
+                    <dx-test-widget></dx-test-widget>
+                    <dx-test-widget></dx-test-widget>
+                    <dx-test-widget></dx-test-widget>
+                `
             }
         });
 
         let fixture = TestBed.createComponent(TestContainerComponent);
-        fixture.detectChanges();
 
-        expect(getWidget(fixture).option('testCalculatedOption')).toBe('changed');
-        expect(fixture.componentInstance.testCalculatedOption).toBe('changed');
-    }));
+        expect(fixture.componentInstance.onStableCallCount).toBe(1);
 
-  });
+        fixture.autoDetectChanges(false);
+    });
+
+    it('should not be failed when two-way binding in markup is used for ininitial option', () => {
+        TestBed.configureTestingModule(
+        {
+            declarations: [ TestContainerComponent, DxTestWidgetComponent ],
+            providers: [{ provide: ComponentFixtureAutoDetect, useValue: true }]
+        });
+        TestBed.overrideComponent(TestContainerComponent, {
+            set: {
+                template: `
+                    <dx-test-widget #widget></dx-test-widget>
+                    <div id="test">{{widget.text}}</div>
+                `
+            }
+        });
+
+        let fixture = TestBed.createComponent(TestContainerComponent);
+
+        expect(document.getElementById('test').innerText).toBe('test text');
+        fixture.autoDetectChanges(false);
+    });
+
+});

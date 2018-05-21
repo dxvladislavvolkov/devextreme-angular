@@ -1,22 +1,34 @@
+/* tslint:disable:max-line-length */
+
 <# var collectionProperties = it.properties.filter(item => item.isCollection).map(item => item.name); #>
 <# var collectionNestedComponents = it.nestedComponents.filter(item => item.isCollection && item.root); #>
 <# var baseClass = it.isExtension ? 'DxComponentExtension' : 'DxComponent'; #>
 
 <# var implementedInterfaces = ['OnDestroy']; #>
 
-<# it.isEditor && implementedInterfaces.push('AfterContentInit'); #>
+<# it.isEditor && implementedInterfaces.push('OnInit') && implementedInterfaces.push('AfterViewInit'); #>
 <# it.isEditor && implementedInterfaces.push('ControlValueAccessor'); #>
 <# collectionProperties.length && implementedInterfaces.push('OnChanges', 'DoCheck'); #>
+
+import { HttpClientModule } from '@angular/common/http';
+
+import { BrowserTransferStateModule } from '@angular/platform-browser';
+import { TransferState } from '@angular/platform-browser';
 
 import {
     Component,
     NgModule,
     ElementRef,
     NgZone,
+    PLATFORM_ID,
+    Inject,
+
     Input,
     Output,
-    OnDestroy<#? it.isEditor #>,
-    AfterContentInit,
+    OnDestroy,
+    EventEmitter<#? it.isEditor #>,
+    OnInit,
+    AfterViewInit,
     ContentChild,
     forwardRef,
     HostListener<#?#><#? collectionProperties.length #>,
@@ -26,6 +38,9 @@ import {
     ContentChildren,
     QueryList<#?#>
 } from '@angular/core';
+
+<#? it.isDevExpressRequired #>
+import DevExpress from 'devextreme/bundles/dx.all';<#?#>
 
 import <#= it.className #> from '<#= it.module #>';
 <#? it.isEditor #>
@@ -38,6 +53,7 @@ import {
 
 import { <#= baseClass #> } from '../core/component';
 import { DxTemplateHost } from '../core/template-host';
+import { DxIntegrationModule } from '../core/integration';
 import { DxTemplateModule } from '../core/template';
 import { NestedOptionHost } from '../core/nested-option';
 import { WatcherHelper } from '../core/watcher-helper';
@@ -56,6 +72,9 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
     multi: true
 };<#?#>
 
+<#? it.description #>/**
+ * <#= it.description #>
+ */<#?#>
 @Component({
     selector: '<#= it.selector #>',
     template: '<#? it.isTranscludedContent #><ng-content></ng-content><#?#>',<#? it.isViz #>
@@ -74,22 +93,29 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
     @ContentChild(DxValidatorComponent)
     validator: DxValidatorComponent;
 <#?#>
-    <#~ it.properties :prop:i #>@Input()
-    get <#= prop.name #>(): any {
+<#~ it.properties :prop:i #><#? prop.description #>
+    /**
+     * <#= prop.description #>
+     */<#?#>
+    @Input()
+    get <#= prop.name #>(): <#= prop.type #> {
         return this._getOption('<#= prop.name #>');
     }
-    set <#= prop.name #>(value: any) {
+    set <#= prop.name #>(value: <#= prop.type #>) {
         this._setOption('<#= prop.name #>', value);
     }<#? i < it.properties.length-1 #>
 
-    <#?#><#~#>
-
-    <#~ it.events :event:i #>@Output() <#= event.emit #>;<#? i < it.events.length-1 #>
-    <#?#><#~#>
+<#?#><#~#>
+<#~ it.events :event:i #><#? event.description #>
+    /**
+     * <#= event.description #>
+     */<#?#>
+    @Output() <#= event.emit #>: <#= event.type #>;<#? i < it.events.length-1 #>
+<#?#><#~#>
 
 <#? it.isEditor #>
     @HostListener('valueChange', ['$event']) change(_) { }
-    touched = () => {};<#?#>
+    @HostListener('onBlur', ['$event']) touched = (_) => {};<#?#>
 
 <#~ collectionNestedComponents :component:i #>
     @ContentChildren(<#= component.className #>Component)
@@ -103,9 +129,11 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
 
     constructor(elementRef: ElementRef, ngZone: NgZone, templateHost: DxTemplateHost,
             <#? collectionProperties.length #>private <#?#>_watcherHelper: WatcherHelper<#? collectionProperties.length #>,
-            private _idh: IterableDifferHelper<#?#>, optionHost: NestedOptionHost) {
+            private _idh: IterableDifferHelper<#?#>, optionHost: NestedOptionHost,
+            transferState: TransferState,
+            @Inject(PLATFORM_ID) platformId: any) {
 
-        super(elementRef, ngZone, templateHost, _watcherHelper);
+        super(elementRef, ngZone, templateHost, _watcherHelper, transferState, platformId);
 
         this._createEventEmitters([
             <#~ it.events :event:i #>{ <#? event.subscribe #>subscribe: '<#= event.subscribe #>', <#?#>emit: '<#= event.emit #>' }<#? i < it.events.length-1 #>,
@@ -117,15 +145,13 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
     }
 
     protected _createInstance(element, options) {
-        <#? it.isEditor #>let widget = new <#= it.className #>(element, options);
-        if (this.validator) {
-            this.validator.createInstance(element);
-        }
-        return widget;<#?#><#? !it.isEditor #>return new <#= it.className #>(element, options);<#?#>
+        return new <#= it.className #>(element, options);
     }
 <#? it.isEditor #>
     writeValue(value: any): void {
+        this.eventHelper.lockedValueChangeEvent = true;
         this.value = value;
+        this.eventHelper.lockedValueChangeEvent = false;
     }
 <#? it.widgetName !== "dxRangeSelector" #>
     setDisabledState(isDisabled: boolean): void {
@@ -134,18 +160,34 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
 <#?#>
     registerOnChange(fn: (_: any) => void): void { this.change = fn; }
     registerOnTouched(fn: () => void): void { this.touched = fn; }
+
+    _createWidget(element: any) {
+        super._createWidget(element);
+        this.instance.on('focusOut', (e) => {
+            this.eventHelper.fireNgEvent('onBlur', [e]);
+        });
+    }
 <#?#>
     ngOnDestroy() {
         this._destroyWidget();
     }
 <#? collectionProperties.length #>
-    ngOnChanges(changes: SimpleChanges) {<#~ collectionProperties :prop:i #>
-        this._idh.setup('<#= prop #>', changes);<#~#>
+    ngOnChanges(changes: SimpleChanges) {
+        super.ngOnChanges(changes);<#~ collectionProperties :prop:i #>
+        this.setupChanges('<#= prop #>', changes);<#~#>
+    }
+
+    setupChanges(prop: string, changes: SimpleChanges) {
+        if (!(prop in this._optionsToUpdate)) {
+            this._idh.setup(prop, changes);
+        }
     }
 
     ngDoCheck() {<#~ collectionProperties :prop:i #>
         this._idh.doCheck('<#= prop #>');<#~#>
         this._watcherHelper.checkWatchers();
+        super.ngDoCheck();
+        super.clearChangedOptions();
     }
 
     _setOption(name: string, value: any) {
@@ -157,9 +199,16 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
         }
     }<#?#>
 <#? it.isEditor #>
-    ngAfterContentInit() {
+    ngOnInit() {
+        super.ngOnInit();
         if (this.validator) {
-            this.validator.renderOnViewInit = false;
+            this.validator.createInstanceOnInit = false;
+        }
+    }
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        if (this.validator) {
+            this.validator.createInstance(this.element.nativeElement);
         }
     }<#?#>
 }
@@ -167,7 +216,10 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
 @NgModule({
   imports: [<#~ it.nestedComponents :component:i #>
     <#= component.className #>Module,<#~#>
-    DxTemplateModule
+    DxIntegrationModule,
+    DxTemplateModule,
+    HttpClientModule,
+    BrowserTransferStateModule
   ],
   declarations: [
     <#= it.className #>Component
@@ -176,6 +228,6 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
     <#= it.className #>Component<#~ it.nestedComponents :component:i #>,
     <#= component.className #>Module<#~#>,
     DxTemplateModule
-  ],
+  ]
 })
 export class <#= it.className #>Module { }

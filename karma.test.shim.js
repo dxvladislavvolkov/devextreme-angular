@@ -1,45 +1,13 @@
-// /*global jasmine, __karma__, window*/
-Error.stackTraceLimit = Infinity;
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 2000;
+require("./karma.common.test.shim");
 
-__karma__.loaded = function () {};
+const testing = require("@angular/core/testing");
+const browser = require("@angular/platform-browser-dynamic/testing");
 
-function isSpecFile(path) {
-  return /\.spec\.js$/.test(path);
-}
+testing.TestBed.initTestEnvironment(
+    browser.BrowserDynamicTestingModule,
+    browser.platformBrowserDynamicTesting()
+);
 
-var allSpecFiles = Object.keys(window.__karma__.files)
-  .filter(isSpecFile);
-
-System.config({
-  baseURL: '/base',
-  packageWithIndex: true
-});
-
-System.import('karma.systemjs.conf.js')
-  .then(function () {
-    return Promise.all([
-      System.import('@angular/core/testing'),
-      System.import('@angular/platform-browser-dynamic/testing')
-    ])
-  })
-  .then(function (providers) {
-    var coreTesting = providers[0];
-    var browserTesting = providers[1];
-
-    coreTesting.TestBed.initTestEnvironment(
-            browserTesting.BrowserDynamicTestingModule,
-            browserTesting.platformBrowserDynamicTesting());
-  })
-  .then(function() {
-    return System.import('jquery').then(function($) {
-      $.noConflict(true); 
-    });
-  })
-  .then(function() {
-    return Promise.all(
-      allSpecFiles.map(function (moduleName) {
-        return System.import(moduleName);
-      }));
-  })
-  .then(__karma__.start, __karma__.error);
+const context = require.context('./tests/dist', true, /^.\/(?!.*\/ssr-components.spec.js$).*\.spec\.js$/);
+context.keys().map(context);
+__karma__.start();

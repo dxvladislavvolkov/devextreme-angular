@@ -7,7 +7,7 @@
         "experimentalDecorators": true,
         "sourceMap": true,
         "inlineSources": true,
-        "removeComments": true,
+        "removeComments": false,
         "declaration": true,
         "noUnusedParameters": true,
         "noUnusedLocals": true,
@@ -17,6 +17,7 @@
         "**/*.ts"
     ],
     "angularCompilerOptions": {
-        "skipTemplateCodegen": true
+        "skipTemplateCodegen": true,
+        "fullTemplateTypeCheck": true
     }
 }

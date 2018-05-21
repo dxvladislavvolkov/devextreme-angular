@@ -1,21 +1,24 @@
-import { QueryList, ElementRef } from '@angular/core';
-
-declare function require(params: any): any;
-let $ = require('jquery');
+import { QueryList, ElementRef, Renderer2, EventEmitter } from '@angular/core';
+import { ɵgetDOM as getDOM } from '@angular/platform-browser';
 
 import { DX_TEMPLATE_WRAPPER_CLASS } from './template';
+import { getElement } from './utils';
+
+import * as events from 'devextreme/events';
 
 const VISIBILITY_CHANGE_SELECTOR = 'dx-visibility-change-handler';
 
 export interface INestedOptionContainer {
     instance: any;
+    isLinked: boolean;
+    optionChangedHandlers: EventEmitter<any>;
 }
 
-export interface OptionPathGetter { (): string; }
+export interface IOptionPathGetter { (): string; }
 
 export abstract class BaseNestedOption implements INestedOptionContainer, ICollectionNestedOptionContainer {
     protected _host: INestedOptionContainer;
-    protected _hostOptionPath: OptionPathGetter;
+    protected _hostOptionPath: IOptionPathGetter;
     private _collectionContainerImpl: ICollectionNestedOptionContainer;
     protected _initialOptions = {};
 
@@ -24,6 +27,25 @@ export abstract class BaseNestedOption implements INestedOptionContainer, IColle
 
     constructor() {
         this._collectionContainerImpl = new CollectionNestedOptionContainerImpl(this._setOption.bind(this), this._filterItems.bind(this));
+    }
+
+    protected _optionChangedHandler(e: any) {
+        let fullOptionPath = this._fullOptionPath();
+
+        if (e.fullName.indexOf(fullOptionPath) === 0) {
+            let optionName = e.fullName.slice(fullOptionPath.length);
+            let emitter = this[optionName + 'Change'];
+
+            if (emitter) {
+                emitter.next(e.value);
+            }
+        }
+    }
+
+    protected _createEventEmitters(events) {
+        events.forEach(event => {
+            this[event.emit] = new EventEmitter();
+        });
     }
 
     protected _getOption(name: string): any {
@@ -42,9 +64,10 @@ export abstract class BaseNestedOption implements INestedOptionContainer, IColle
         }
     }
 
-    setHost(host: INestedOptionContainer, optionPath: OptionPathGetter) {
+    setHost(host: INestedOptionContainer, optionPath: IOptionPathGetter) {
         this._host = host;
         this._hostOptionPath = optionPath;
+        this.optionChangedHandlers.subscribe(this._optionChangedHandler.bind(this));
     }
 
     setChildren<T extends ICollectionNestedOption>(propertyName: string, items: QueryList<T>) {
@@ -60,7 +83,11 @@ export abstract class BaseNestedOption implements INestedOptionContainer, IColle
     }
 
     get isLinked() {
-        return !!this.instance;
+        return !!this.instance && this._host.isLinked;
+    }
+
+    get optionChangedHandlers() {
+        return this._host && this._host.optionChangedHandlers;
     }
 }
 
@@ -91,7 +118,7 @@ export class CollectionNestedOptionContainerImpl implements ICollectionNestedOpt
 }
 
 export abstract class NestedOption extends BaseNestedOption {
-    setHost(host: INestedOptionContainer, optionPath: OptionPathGetter) {
+    setHost(host: INestedOptionContainer, optionPath: IOptionPathGetter) {
         super.setHost(host, optionPath);
 
         this._host[this._optionPath] = this._initialOptions;
@@ -123,10 +150,25 @@ export abstract class CollectionNestedOption extends BaseNestedOption implements
     }
 }
 
-export interface OptionWithTemplate extends BaseNestedOption {
+export interface IOptionWithTemplate extends BaseNestedOption {
     template: any;
 }
-export function extractTemplate(option: OptionWithTemplate, element: ElementRef) {
+
+let triggerShownEvent = function(element) {
+    let changeHandlers = [];
+
+    if (getDOM().hasClass(element, VISIBILITY_CHANGE_SELECTOR)) {
+        changeHandlers.push(element);
+    }
+
+    changeHandlers.push.apply(changeHandlers, element.querySelectorAll('.' + VISIBILITY_CHANGE_SELECTOR));
+
+    for (let i = 0; i < changeHandlers.length; i++) {
+        events.triggerHandler(changeHandlers[i], 'dxshown');
+    }
+};
+
+export function extractTemplate(option: IOptionWithTemplate, element: ElementRef, renderer: Renderer2, document: any) {
     if (!option.template === undefined || !element.nativeElement.hasChildNodes()) {
         return;
     }
@@ -144,49 +186,37 @@ export function extractTemplate(option: OptionWithTemplate, element: ElementRef)
         return;
     }
 
-    function triggerShownEvent($element) {
-        let changeHandlers = $();
-
-        if ($element.hasClass(VISIBILITY_CHANGE_SELECTOR)) {
-            changeHandlers = $element;
-        }
-
-        changeHandlers = changeHandlers.add($element.find('.' + VISIBILITY_CHANGE_SELECTOR));
-
-        for (let i = 0; i < changeHandlers.length; i++) {
-            $(changeHandlers[i]).triggerHandler('dxshown');
-        }
-    }
-
     option.template = {
         render: (renderData) => {
-            let $result = $(element.nativeElement).addClass(DX_TEMPLATE_WRAPPER_CLASS);
+            let result = element.nativeElement;
+
+            renderer.addClass(result, DX_TEMPLATE_WRAPPER_CLASS);
 
             if (renderData.container) {
-                let container = renderData.container.get(0);
+                let container = getElement(renderData.container);
                 let resultInContainer = container.contains(element.nativeElement);
 
-                renderData.container.append(element.nativeElement);
+                renderer.appendChild(container, element.nativeElement);
 
                 if (!resultInContainer) {
                     let resultInBody = document.body.contains(container);
 
                     if (resultInBody) {
-                        triggerShownEvent($result);
+                        triggerShownEvent(result);
                     }
                 }
             }
 
-            return $result;
+            return result;
         }
     };
 }
 
 export class NestedOptionHost {
     private _host: INestedOptionContainer;
-    private _optionPath: OptionPathGetter;
+    private _optionPath: IOptionPathGetter;
 
-    setHost(host: INestedOptionContainer, optionPath?: OptionPathGetter) {
+    setHost(host: INestedOptionContainer, optionPath?: IOptionPathGetter) {
         this._host = host;
         this._optionPath = optionPath || (() => '');
     }

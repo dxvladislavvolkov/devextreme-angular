@@ -1,5 +1,7 @@
 [![Run Status](https://api.shippable.com/projects/575802872a8192902e22e62a/badge?branch=master)](https://app.shippable.com/projects/575802872a8192902e22e62a) [![npm version](https://badge.fury.io/js/devextreme-angular.svg)](https://badge.fury.io/js/devextreme-angular)
 
+### If you are looking for the v17.2 branch, please follow this link: [https://github.com/DevExpress/devextreme-angular/tree/17.2](https://github.com/DevExpress/devextreme-angular/tree/17.2).
+
 # Angular UI and Visualization Components Based on DevExtreme Widgets #
 
 This project allows you to use [DevExtreme Widgets](http://js.devexpress.com/Demos/WidgetsGallery/) in [Angular](https://angular.io/) applications.
@@ -8,7 +10,9 @@ This project allows you to use [DevExtreme Widgets](http://js.devexpress.com/Dem
   * [Prerequisites](#prerequisites)
   * [DevExtreme installation](#add-to-existing-app)
   * [Starting a new application](#create-application)
+  * [Server-side Rendering](#server-side-rendering)
   * [Running the local examples](#running-examples)
+  * [Include jQuery integration](#jquery-integration)
 * [Usage samples](#usage-samples)
   * [Static string option value](#static-option)
   * [Static non-string option value](#static-non-string-option)
@@ -28,7 +32,6 @@ This project allows you to use [DevExtreme Widgets](http://js.devexpress.com/Dem
 * [Demos](#demos)
 * [API reference](#api-reference)
 * [Bundle size optimization](#bundle-optimization)
-* [Server-side rendering](#server-side-rendering)
 * [License](#license)
 * [Support & feedback](#support-feedback)
 
@@ -42,6 +45,8 @@ You have the following options to start:
 * [Run the local examples](#running-examples)
 
 ### <a name="prerequisites"></a>Prerequisites ###
+
+**Starting with v18.1, DevExtreme-Angular requires [Angular](https://angular.io/) version 5 or later**
 
 <a href="https://docs.npmjs.com/getting-started/installing-node" target="_blank" title="Installing Node.js and updating npm">Node.js and npm</a> are
 required and essential to Angular development.
@@ -65,6 +70,7 @@ The further configuration steps depend on which build tool, bundler or module lo
 
 * [Configuring SystemJS](https://github.com/DevExpress/devextreme-angular/blob/master/docs/using-systemjs.md#configuration)
 * [Configuring Angular CLI](https://github.com/DevExpress/devextreme-angular/blob/master/docs/using-angular-cli.md#configuration)
+    - [Third-party dependencies registration in Angular CLI 6+](https://github.com/DevExpress/devextreme-angular/blob/master/docs/setup-3rd-party-dependencies.md)
 * [Configuring Webpack](https://github.com/DevExpress/devextreme-angular/blob/master/docs/using-webpack.md#configuration)
 * [Configuring Rollup](https://github.com/DevExpress/devextreme-angular/blob/master/docs/using-rollup.md#configuration)
 * [Configuring Ionic 2](https://github.com/DevExpress/devextreme-angular/blob/master/docs/using-ionic2.md#configuration)
@@ -113,9 +119,71 @@ Depending on your requirements you can choose one of the following ways to start
 
 * [Start with SystemJS](https://github.com/DevExpress/devextreme-angular/blob/master/docs/using-systemjs.md)
 * [Start with Angular CLI](https://github.com/DevExpress/devextreme-angular/blob/master/docs/using-angular-cli.md)
+    - [Third-party dependencies registration in Angular CLI 6+](https://github.com/DevExpress/devextreme-angular/blob/master/docs/setup-3rd-party-dependencies.md)
 * [Start with Webpack](https://github.com/DevExpress/devextreme-angular/blob/master/docs/using-webpack.md)
 * [Start with Rollup](https://github.com/DevExpress/devextreme-angular/blob/master/docs/using-rollup.md)
 * [Start with Ionic 2](https://github.com/DevExpress/devextreme-angular/blob/master/docs/using-ionic2.md)
+
+### <a name="server-side-rendering"></a>Server-side Rendering ###
+
+Angular Universal provides [server-side rendering](https://angular.io/guide/universal#angular-universal-server-side-rendering) that significantly reduces the application's loading time. You can use DevExtreme widgets in Angular Universal applications in the same manner as in other Angular apps.
+
+**Note: DevExtreme-angular does not support [dynamic theme loading](https://js.devexpress.com/Documentation/Guide/Themes/Predefined_Themes/#Themes_in_DevExtreme_Apps) in the Server-side rendering mode due to technical restrictions. You can only use a single static theme by linking the corresponding CSS file.**
+
+You can [create a new Angular Universal app](https://github.com/angular/angular-cli/wiki/stories-universal-rendering#angular-universal-integration) and [add DevExtreme widgets](#add-to-existing-app) to it, or add the Universal module to an existing Angular application with DevExtreme. Use the following command to add the Universal module to an existing app:
+
+```bash
+ng generate universal my-app
+```
+
+See [Angular 5.1 & More Now Available](https://blog.angular.io/angular-5-1-more-now-available-27d372f5eb4e) for more information.
+
+[This example](https://github.com/DevExpress/devextreme-examples/tree/18_1/universal-angular) demonstrates the use of DevExtreme Angular controls in an Angular Universal application.
+
+#### <a name="cache-requests"></a>Cache Requests on the Server ####
+
+DevExtreme-angular supports caching requests on the server in the server-side rendering mode. This avoids repeatedly requesting data from the browser and renders widgets using data that is initially applied when the page is loaded for the first time.
+
+To enable caching, import the `DxServerTransferStateModule` module in the module's .ts file (usually *src/app.module.ts*):
+
+```js
+import { DxServerTransferStateModule } from 'devextreme-angular';
+
+@NgModule({
+    ...
+    imports: [
+        ...
+        DxServerTransferStateModule,
+        ...
+    ]
+})
+export class AppModule {}
+```
+
+and import the the `ServerTransferStateModule` module in the server module's .ts file (usually *src/app.server.module.ts*):
+
+```js
+import { ServerModule, ServerTransferStateModule } from '@angular/platform-server';
+
+@NgModule({
+    imports: [
+        AppModule,
+        ServerModule,
+        ServerTransferStateModule,
+        ModuleMapLoaderModule
+    ],
+    bootstrap: [AppComponent],
+})
+```
+
+Also, ensure that the application module is bootstrapped when the document has been loaded (the *main.ts* file should contain the code below). Otherwise, caching does not work correctly.
+
+```js
+document.addEventListener('DOMContentLoaded', () => {
+    platformBrowserDynamic().bootstrapModule(AppModule)
+        .catch(err => console.log(err));
+});
+```
 
 ### <a name="running-examples"></a>Running the Local Examples ###
 
@@ -136,6 +204,17 @@ npm start
 ```
 
 Navigate to [http://127.0.0.1:8875/examples/](http://127.0.0.1:8875/examples/) in the opened browser window. Explore the **examples** folder of this repository for the examples source code.
+
+### <a name="jquery-integration"></a>Include jQuery integration ###
+Starting with version 17.2, DevExtreme doesn't depend on jQuery. It means that our widgets work without jQuery elements. If you need to use jQuery, you can manually install the jquery npm package and include the jQuery integration as described below:
+
+```bash
+npm install --save jquery
+```
+
+```js
+import 'devextreme/integration/jquery';
+```
 
 ## <a name="usage-samples"></a>Usage Samples ##
 
@@ -267,15 +346,14 @@ The DevExtreme Angular editors support the 'ngModel' binding as well as the 'for
 
 ```html
 <form [formGroup]="form">
-        <dx-text-box
-            name="email"
-            [(ngModel)]="email"
-            [isValid]="emailControl.valid || emailControl.pristine"
-            [validationError]="{ message: 'Email is invalid'}">
-        </dx-text-box>
+    <dx-text-box
+        name="email"
+        [(ngModel)]="email"
+        [isValid]="emailControl.valid || emailControl.pristine"
+        [validationError]="{ message: 'Email is invalid'}">
+    </dx-text-box>
 </form>
 ```
-
 
 ```js
 @Component({
@@ -288,7 +366,7 @@ export class AppComponent implements OnInit {
    form: FormGroup;
    ngOnInit() {
        this.form = new FormGroup({
-           email: new FormControl('', Validators.compose([Validators.required, CustomValidator.mailFormat]))
+           email: new FormControl('', Validators.compose([Validators.required, Validators.email]))
        });
        this.emailControl = this.form.controls['email'];
    }
@@ -318,7 +396,6 @@ validation summary and other DevExtreme validation features with Angular DevExtr
 </dx-validation-group>
 ```
 
-
 ```js
 @Component({
     selector: 'my-app',
@@ -345,7 +422,6 @@ export class AppComponent {
     }
 }
 ```
-
 
 ### <a name="configuration-components"></a>Configuration Components ###
 
@@ -457,6 +533,18 @@ export class AppComponent {
 }
 ```
 
+If your item template contains some *nested* components, declare it using the parameterless `dxTemplate` structural directive as follows:
+
+```html
+<dx-list>
+    <dxi-item>
+        <div *dxTemplate>
+            <dx-button text="I'm a nested child component"></dx-button>
+        </div>
+    </dxi-item>
+</dx-list>
+```
+
 Angular has a built-in `template` directive. To define the `template` property of the configuration component (for example, `dxo-master-detail`), use the following code:
 ```html
 <dxo-master-detail [template]="'masterDetail'"></dxo-master-detail>
@@ -556,11 +644,6 @@ as follows:
 ```js
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 ```
-
-## <a name="server-side-rendering"></a>Server-side Rendering ##
-
-Currently, DevExtreme components **do not support** server side rendering (check [this issue](https://github.com/DevExpress/devextreme-angular/issues/46)).
-So, you are required to switch this feature off.
 
 ## <a name="license"></a>License ##
 

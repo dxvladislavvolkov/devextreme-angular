@@ -1,17 +1,25 @@
 
-import { NgModule, Inject, NgZone } from '@angular/core';
+import { NgModule, Inject, NgZone, Optional } from '@angular/core';
+import { XhrFactory } from '@angular/common/http';
+import * as httpRequest from 'devextreme/core/http_request';
 import { DOCUMENT } from '@angular/common';
-import { NgHttp } from './http-request';
 
 import * as domAdapter from 'devextreme/core/dom_adapter';
 import * as readyCallbacks from 'devextreme/core/utils/ready_callbacks';
 
-const events = ['mousemove', 'mouseover', 'mouseout', 'scroll'];
-@NgModule({
-    providers: [ NgHttp ]
-})
+const events = ['mousemove', 'mouseover', 'mouseout', 'scroll', 'wheel'];
+let originalAdd;
+const callbacks = [];
+readyCallbacks.inject({
+    add: function(callback) {
+        originalAdd = this.callBase;
+        callbacks.push(callback);
+    }
+});
+
+@NgModule({})
 export class DxIntegrationModule {
-    constructor(@Inject(DOCUMENT) document: any, ngZone: NgZone, _ngHttp: NgHttp) {
+    constructor(@Inject(DOCUMENT) document: any, ngZone: NgZone, @Optional() xhrFactory: XhrFactory) {
         domAdapter.inject({
             _document: document,
 
@@ -40,6 +48,23 @@ export class DxIntegrationModule {
             }
         });
 
-        ngZone.run(() => readyCallbacks.fire());
+        httpRequest.inject({
+            getXhr: function() {
+                if (!xhrFactory) {
+                    return this.callBase.apply(this);
+                }
+                let _xhr = xhrFactory.build();
+                if (!('withCredentials' in _xhr)) {
+                    _xhr['withCredentials'] = false;
+                }
+
+                return _xhr;
+            }
+        });
+
+        ngZone.run(() => {
+            callbacks.forEach(callback => originalAdd.call(null, callback));
+            readyCallbacks.fire();
+        });
     }
 }

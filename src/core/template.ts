@@ -6,8 +6,7 @@ import {
     TemplateRef,
     ViewContainerRef,
     Input,
-    Renderer2,
-    NgZone
+    Renderer2
 } from '@angular/core';
 
 import { DxTemplateHost } from './template-host';
@@ -35,25 +34,15 @@ export class DxTemplateDirective {
     constructor(private templateRef: TemplateRef<any>,
         private viewContainerRef: ViewContainerRef,
         templateHost: DxTemplateHost,
-        private renderer: Renderer2,
-        private ngZone: NgZone) {
+        private renderer: Renderer2) {
         templateHost.setTemplate(this);
     }
 
     render(renderData: RenderData) {
-        let renderTemplate = () => {
-            return this.viewContainerRef.createEmbeddedView(this.templateRef, {
-                '$implicit': renderData.model,
-                index: renderData.index
-            });
-        };
-
-        let childView;
-        if (this.ngZone.isStable) {
-            childView = this.ngZone.run(() => renderTemplate());
-        } else {
-            childView = renderTemplate();
-        }
+        let childView = this.viewContainerRef.createEmbeddedView(this.templateRef, {
+            '$implicit': renderData.model,
+            index: renderData.index
+        });
         let container = getElement(renderData.container);
         if (renderData.container) {
             childView.rootNodes.forEach((element) => {
@@ -62,17 +51,15 @@ export class DxTemplateDirective {
         }
         // =========== WORKAROUND =============
         // https://github.com/angular/angular/issues/12243
-        this.ngZone.run(() => {
-            childView['detectChanges']();
-        });
+        childView['detectChanges']();
         // =========== /WORKAROUND =============
         childView.rootNodes.forEach((element) => {
             if (element.nodeType === 1) {
                 this.renderer.addClass(element, DX_TEMPLATE_WRAPPER_CLASS);
             }
 
-            events.one(element, 'dxremove', (e) => {
-                if (!e._angularIntegration) {
+            events.one(element, 'dxremove', ({}, params) => {
+                if (!params || !params._angularIntegration) {
                     childView.destroy();
                 }
             });

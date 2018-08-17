@@ -1,4 +1,31 @@
-## 18.1.4-beta.2 (2018-05-30)
+## 18.2.1-beta.1 (2018-08-10)
+
+### Features
+
+- Update `devextreme` version to 18.2.1-pre
+
+## 18.1.5-beta.3 (2018-07-20)
+
+### Bug Fixes
+- Fix NPM package
+
+## 18.1.5-beta.2 (2018-07-19)
+
+### Bug Fixes
+- Fix the variable name [#830](https://github.com/DevExpress/devextreme-angular/pull/830)
+
+## 18.1.5-beta.1 (2018-07-02)
+
+### Bug Fixes
+- Reduce change detection call count for widgets [#817](https://github.com/DevExpress/devextreme-angular/pull/817)
+
+## 18.1.4 (2018-06-21)
+
+### Bug Fixes
+- Fix check for objects comparison [#801](https://github.com/DevExpress/devextreme-angular/pull/801)
+- Form should validate items if the ngIf directive is applied to an item [#805](https://github.com/DevExpress/devextreme-angular/pull/805)
+
+## 18.1.4-beta.2 (2018-05-31)
 
 ### Bug Fixes
 - DevExtreme should subscribe on all global events within Angular Zone [#798](https://github.com/DevExpress/devextreme-angular/pull/798)

@@ -1,6 +1,6 @@
 [![Run Status](https://api.shippable.com/projects/575802872a8192902e22e62a/badge?branch=master)](https://app.shippable.com/projects/575802872a8192902e22e62a) [![npm version](https://badge.fury.io/js/devextreme-angular.svg)](https://badge.fury.io/js/devextreme-angular)
 
-### If you are looking for the v17.2 branch, please follow this link: [https://github.com/DevExpress/devextreme-angular/tree/17.2](https://github.com/DevExpress/devextreme-angular/tree/17.2).
+### If you are looking for the v18.1 branch, please follow this link: [https://github.com/DevExpress/devextreme-angular/tree/18.1](https://github.com/DevExpress/devextreme-angular/tree/18.1).
 
 # Angular UI and Visualization Components Based on DevExtreme Widgets #
 
@@ -34,12 +34,13 @@ This project allows you to use [DevExtreme Widgets](http://js.devexpress.com/Dem
 * [Bundle size optimization](#bundle-optimization)
 * [License](#license)
 * [Support & feedback](#support-feedback)
+* [Version history](#version-history)
 
 ## <a name="getting-started"></a>Getting Started ##
 
 You have the following options to start:
 
-* [Play around with our Plunker](http://plnkr.co/edit/XuAPDd?p=preview) without installing anything
+* Play around with our [Plunker](http://next.plnkr.co/edit/XuAPDd?preview) or [Stackblitz](https://stackblitz.com/edit/angular-c2djgn) without installing anything
 * [Add DevExtreme to your existing Angular application](#add-to-existing-app)
 * [Creating a new Angular application](#create-application) and install DevExtreme
 * [Run the local examples](#running-examples)
@@ -658,3 +659,11 @@ Familiarize yourself with the
 * For general Angular topics, follow [these guidelines](https://github.com/angular/angular/blob/master/CONTRIBUTING.md)
 * For questions regarding DevExtreme libraries and JavaScript API, use [DevExpress Support Center](https://www.devexpress.com/Support/Center)
 * For DevExtreme Angular integration bugs, questions and suggestions, use the [GitHub issue tracker](https://github.com/DevExpress/devextreme-angular/issues)
+
+## <a name="version-history"></a>Version history ###
+
+| DevExtreme | Angular |
+| ---------- | ----------------|
+| v18.1+     | v5.0 - v6.0+ | 
+| v17.1+ <br/> v17.2+ | v2.4 - v5.0+ | 
+ 

@@ -46,24 +46,25 @@ You have the following options to start:
 * [Creating a new Angular application](#create-application) and install DevExtreme
 * [Run the local examples](#running-examples)
 
-### <a name="quick-start"></a>Quick Start **(18.2-beta)** ###
+### <a name="quick-start"></a>Quick Start ###
 
-You can use the [Angular CLI](https://github.com/angular/angular-cli) or the [DevExtreme CLI](https://github.com/DevExpress/devextreme-cli) to create a [DevExtreme Angular application](https://devexpress.github.io/devextreme-angular-template) that already includes several sample views and a navigation menu:
+You can use the [Angular CLI](https://github.com/angular/angular-cli) to create a [DevExtreme Angular application](https://devexpress.github.io/devextreme-angular-template) that includes several sample views and a navigation menu:
 
-- DevExtreme CLI
+```bash
+ng new app-name --style=scss
+cd app-name
+npm i devextreme-angular
+ng g devextreme-angular:add-app-template
+ng serve
+```
 
-        npx devextreme-cli new angular-app app-name
-        cd app-name
-        ng serve
+You can also use the [DevExtreme CLI](https://github.com/DevExpress/devextreme-cli)'s `new angular-app` command to do this:
 
-- Angular CLI
-
-        npm install -g @angular/cli
-        ng new app-name --style=scss
-        cd app-name
-        npm i devextreme-angular@18.2-unstable
-        ng g devextreme-angular:add-app-template
-        ng serve
+```bash
+npx devextreme-cli new angular-app app-name
+cd app-name
+npm run start
+```
 
 See the [DevExtreme Angular Template README](https://github.com/DevExpress/devextreme-angular-template#devextreme-angular-template) for more information.
 
@@ -79,11 +80,11 @@ required to build the project and run tests.
 
 ### <a name="add-to-existing-app"></a>Adding DevExteme to an Existing Angular Application ###
 
-You can use the [Angular CLI](https://github.com/angular/angular-cli) or the [DevExtreme CLI](https://github.com/DevExpress/devextreme-cli) to add DevExtreme to an existing application **(18.2-beta)**:
+You can use the [Angular CLI](https://github.com/angular/angular-cli) or the [DevExtreme CLI](https://github.com/DevExpress/devextreme-cli) to add DevExtreme to an existing application:
 
 - Angular CLI
 
-        ng add devextreme-angular@18.2-unstable
+        ng add devextreme-angular
 
 - DevExtreme CLI
 
@@ -349,6 +350,16 @@ The local 'itemData' and 'groupData' variables (that are declared via the 'let' 
 render the data where you need inside the template.
 
 The 'item' and 'group' names are default template names for the 'itemTemplate' and 'groupTemplate' options of the dxList widget.
+
+The widgets that support the **template** option (**Button**, **Popup**, **Drawer** and others) also allow you to put the markup directly into the widget element to customize their content:
+
+```html
+<dx-button (onClick)="foo($event)">
+    <i style="color:green">
+        Refresh
+    </i> 
+</dx-button>
+```
 
 ### <a name="data-layer"></a>Data Layer ###
 
@@ -698,6 +709,6 @@ Familiarize yourself with the
 
 | DevExtreme | Angular |
 | ---------- | ----------------|
-| v18.1+     | v5.0 - v6.0+ |
+| v18.1+ <br/> v18.2+ | v5.0 - v7.0+ |
 | v17.1+ <br/> v17.2+ | v2.4 - v5.0+ |
 

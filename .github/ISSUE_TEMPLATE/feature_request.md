@@ -18,7 +18,7 @@ assignees: ''
     devexteme version:
     devextreme-angular version:
 
-**Description
+**Description**
 <!-- Description of the problem or missing capability -->
 
 **Describe the solution you'd like**

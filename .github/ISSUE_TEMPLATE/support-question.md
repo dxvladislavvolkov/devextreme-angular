@@ -7,5 +7,6 @@ assignees: ''
 
 ---
 
-<!-- We don't provide support for customer issues here.
-Use the Support Center instead: https://devexpress.com/sc -->
+# Support Question
+
+Please do not submit support requests and "How to" questions here. Navigate to our Support Center (https://devexpress.com/sc) instead.

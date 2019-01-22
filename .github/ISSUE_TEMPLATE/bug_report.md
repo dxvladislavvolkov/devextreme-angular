@@ -7,30 +7,36 @@ assignees: ''
 
 ---
 
-<!-- Before submitting an issue, please consult our docs (https://github.com/DevExpress/devextreme-angular#angular-ui-and-visualization-components-based-on-devextreme-widgets) and (https://js.devexpress.com/Documentation/Guide/Getting_Started/Widget_Basics_-_Angular/Create_and_Configure_a_Widget/)-->
+<!-- *************************************************************************************************
+To help us expedite the issue processing, please search opened and closed tickets in our support center (https://www.devexpress.com/Support/Center/Question/List/1) before you submit a new issue. The tickets can contain resolutions, workarounds, or information about the progress in fixing.
 
-<!-- Please do not submit support requests or questions here. Instead, please use Support center (https://www.devexpress.com/Support/Center/Question/Create) -->
+You can also find information that can help you to resolve the issue in the following resources:
+
+    - https://github.com/DevExpress/devextreme-angular/blob/master/README.md
+    - https://js.devexpress.com/Documentation/Guide/Getting_Started/Widget_Basics_-_Angular/
+******************************************************************************************************* -->
 
 # Bug Report
 
-<!--To help us process the issue more efficiently, please provide the following information -->
+<!-- Please provide the following information -->
 
-**Specify the version of the packages you are using:**
+**Package versions:**
 
     devexteme version:
     devextreme-angular version:
 
 **Steps to reproduce:**
- <!-- If you are able to illustrate the bug or feature request with an example, please provide a sample application. You can use:
- - A sample application via GitHub
- - StackBlitz (https://stackblitz.com)
- - Plunker (http://plnkr.co/edit/cpeRJs?p=preview) -->
+<!-- Provide a sample application that illustrates the bug if possible. Do it using: 
+    - GitHub
+    - StackBlitz (https://stackblitz.com)
+    - Plunker (http://plnkr.co/edit/cpeRJs?p=preview)
+-->
 
 **Current behavior:**
 <!-- Describe how the bug manifests. -->
 
 **Expected behavior:**
-<!-- A clear and concise description of what you expected to happen. -->
+<!-- Describe what you expect to happen. -->
 
 **Screenshots:**
-<!-- If applicable, add screenshots to help explain your problem. -->
+<!-- Add screenshots that demonstrate your problem if possible. -->

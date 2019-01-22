@@ -1,6 +1,6 @@
 {
   "name": "devextreme-angular",
-  "version": "18.2.3",
+  "version": "18.2.4",
   "description": "Angular UI and visualization components based on DevExtreme widgets",
   "repository": {
     "type": "git",
@@ -17,13 +17,13 @@
   "author": "Developer Express Inc.",
   "license": "MIT",
   "peerDependencies": {
-    "devextreme": "~18.2.3",
+    "devextreme": "~18.2.4",
     "@angular/core": ">5.0.0",
     "@angular/common": ">5.0.0",
     "@angular/forms": ">5.0.0"
   },
   "devDependencies": {
-    "devextreme": "~18.2.3",
+    "devextreme": "~18.2.4",
     "zone.js": "^0.8.25",
     "@angular/animations": "^5.0.0",
     "@angular/common": "^5.0.0",
@@ -63,10 +63,10 @@
     "karma-chrome-launcher": "^2.0.0",
     "karma-jasmine": "^1.0.2",
     "karma-junit-reporter": "^1.1.0",
-    "karma-phantomjs-launcher": "^1.0.2",
     "karma-webpack": "^2.0.9",
     "lite-server": "^2.2.0",
     "mkdirp": "^0.5.1",
+    "puppeteer": "^1.11.0",
     "run-sequence": "^1.2.2",
     "tslint": "^4.0.2",
     "typescript": "~2.4.2",

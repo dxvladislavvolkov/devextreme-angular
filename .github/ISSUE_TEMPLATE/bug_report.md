@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a bug in devextreme-angular
 title: ''
 labels: ''
 assignees: ''
@@ -9,7 +9,7 @@ assignees: ''
 
 <!-- Before submitting an issue, please consult our docs (https://github.com/DevExpress/devextreme-angular#angular-ui-and-visualization-components-based-on-devextreme-widgets) and (https://js.devexpress.com/Documentation/Guide/Getting_Started/Widget_Basics_-_Angular/Create_and_Configure_a_Widget/)-->
 
-<!-- Please do not submit support requests or "How to" questions here. Instead, please use the Support Center instead: https://devexpress.com/sc -->
+<!-- Please do not submit support requests or "How to" questions here. Instead, please use Support center (https://www.devexpress.com/Support/Center/Question/Create) -->
 
 # Bug Report
 
@@ -19,6 +19,12 @@ assignees: ''
 
     devexteme version:
     devextreme-angular version:
+
+**Steps to reproduce:**
+ <!-- If you are able to illustrate the bug or feature request with an example, please provide a sample application. You can use:
+ - A sample application via GitHub
+ - StackBlitz (https://stackblitz.com)
+ - Plunker (http://plnkr.co/edit/cpeRJs?p=preview) -->
 
 **Current behavior:**
 <!-- Describe how the bug manifests. -->

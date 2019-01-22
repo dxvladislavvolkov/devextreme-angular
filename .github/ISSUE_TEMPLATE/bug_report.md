@@ -11,12 +11,11 @@ assignees: ''
 
 <!-- Please do not submit support requests or "How to" questions here. Instead, please use Support center (https://www.devexpress.com/Support/Center/Question/Create) -->
 
+# Bug Report
 
 <!--To help us process the issue more efficiently, please provide the following information -->
 
-# Bug Report
-
-**Specify the version of the *devextreme-angular* and *devextreme* packages you are using.**
+**Specify the version of the packages you are using:**
 
     devexteme version:
     devextreme-angular version:
@@ -24,8 +23,8 @@ assignees: ''
 **Current behavior:**
 <!-- Describe how the bug manifests. -->
 
-**Expected behavior**
+**Expected behavior:**
 <!-- A clear and concise description of what you expected to happen. -->
 
-**Screenshots**
+**Screenshots:**
 <!-- If applicable, add screenshots to help explain your problem. -->

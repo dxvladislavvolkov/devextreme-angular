@@ -7,22 +7,22 @@ assignees: ''
 
 ---
 
-<!-- Before submitting an issue, please consult our docs (https://github.com/DevExpress/devextreme-angular#angular-ui-and-visualization-components-based-on-devextreme-widgets) and (https://js.devexpress.com/Documentation/Guide/Getting_Started/Widget_Basics_-_Angular/Create_and_Configure_a_Widget/)-->
-
-<!-- Please do not submit support requests or questions here. Instead, please use Support center (https://www.devexpress.com/Support/Center/Question/Create) -->
+<!-- *****************************************************************************************************
+Please look through our Roadmap for future releases (https://js.devexpress.com/Roadmap/) before you submit an issue.
+********************************************************************************************************** -->
 
 # Feature request
 
-**Specify the version of the packages you are using:**
+**Package versions you currently use:**
 
     devexteme version:
     devextreme-angular version:
 
-**Description**
-<!-- Description of the problem or missing capability -->
+**Description:**
+<!-- Describe a problem or missing capability. -->
 
-**Describe the solution you'd like**
-<!-- A clear and concise description of what you want to happen. -->
+**Preferred Solution:**
+<!-- Describe the solution you would like to see. -->
 
-**Describe alternatives you've considered**
-<!-- A clear and concise description of any alternative solutions or features you've considered. -->
+**Alternatives:**
+<!-- If you have considered any alternative solutions or workarounds, describe them. -->

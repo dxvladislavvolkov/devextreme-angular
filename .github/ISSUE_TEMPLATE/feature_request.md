@@ -9,7 +9,7 @@ assignees: ''
 
 <!-- Before submitting an issue, please consult our docs (https://github.com/DevExpress/devextreme-angular#angular-ui-and-visualization-components-based-on-devextreme-widgets) and (https://js.devexpress.com/Documentation/Guide/Getting_Started/Widget_Basics_-_Angular/Create_and_Configure_a_Widget/)-->
 
-<!-- Please do not submit support requests or "How to" questions here. Instead, please use Support center (https://www.devexpress.com/Support/Center/Question/Create) -->
+<!-- Please do not submit support requests or "How to" questions here. Instead, please use the Support Center instead: https://devexpress.com/sc -->
 
 # Feature request
 

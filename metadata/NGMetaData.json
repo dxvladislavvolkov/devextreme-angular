@@ -36,7 +36,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -348,7 +348,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -604,6 +604,7 @@
             "string"
           ],
           "ItemPrimitiveTypes": [
+            "DevExpress.ui.CollectionWidgetItem",
             "any"
           ],
           "IsDataSource": true,
@@ -1751,7 +1752,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -2497,7 +2498,7 @@
       }
     },
     "dxButtonGroup": {
-      "Description": "The ButtonGroup is a widget that contains a set of toggle buttons, and can be used as a mode switcher.",
+      "Description": "The ButtonGroup is a widget that contains a set of toggle buttons and can be used as a mode switcher.",
       "Module": "ui/button_group",
       "Options": {
         "accessKey": {
@@ -6812,7 +6813,8 @@
             "visualRangeUpdateMode": {
               "PrimitiveTypes": [
                 "string"
-              ]
+              ],
+              "Description": "Specifies how the axis's visual range should behave when chart data is updated."
             },
             "wholeRange": {
               "PrimitiveTypes": [
@@ -8312,7 +8314,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -8374,7 +8376,7 @@
         },
         "items": {
           "ItemPrimitiveTypes": [
-            "DevExpress.ui.dxContextMenuItemTemplate"
+            "DevExpress.ui.dxContextMenuItem"
           ],
           "ItemComplexTypes": [
             "ContextMenuItem"
@@ -8824,7 +8826,7 @@
             "Function"
           ],
           "IsFunc": true,
-          "Description": "Customizes data before export. You can use the exporting.customizeExcelCell function instead."
+          "Description": "Customizes data before export. You can use the export.customizeExcelCell function instead."
         },
         "dataSource": {
           "PrimitiveTypes": [
@@ -11427,6 +11429,7 @@
             "string"
           ],
           "ItemPrimitiveTypes": [
+            "DevExpress.ui.CollectionWidgetItem",
             "any"
           ],
           "IsDataSource": true,
@@ -12353,6 +12356,14 @@
             "number"
           ],
           "Description": "Specifies groups' maximum nesting level."
+        },
+        "onContentReady": {
+          "PrimitiveTypes": [
+            "Function"
+          ],
+          "IsFunc": true,
+          "IsEvent": true,
+          "Description": "A function that is executed when the widget's content is ready and each time the content is changed."
         },
         "onDisposing": {
           "PrimitiveTypes": [
@@ -13839,7 +13850,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -15218,7 +15229,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -16050,7 +16061,7 @@
           "PrimitiveTypes": [
             "boolean"
           ],
-          "Description": "A Boolean value specifying whether or not the main screen is inactive while the widget is active."
+          "Description": "Specifies whether to shade the container when the widget is active."
         },
         "shadingColor": {
           "PrimitiveTypes": [
@@ -16173,6 +16184,7 @@
             "string"
           ],
           "ItemPrimitiveTypes": [
+            "DevExpress.ui.CollectionWidgetItem",
             "any"
           ],
           "IsDataSource": true,
@@ -16580,7 +16592,7 @@
           "PrimitiveTypes": [
             "boolean"
           ],
-          "Description": "A Boolean value specifying whether or not the main screen is inactive while the lookup is active."
+          "Description": "Specifies whether to shade the container when the lookup is active. Applies only if usePopover is false."
         },
         "showCancelButton": {
           "PrimitiveTypes": [
@@ -17132,7 +17144,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -17200,7 +17212,7 @@
         },
         "items": {
           "ItemPrimitiveTypes": [
-            "DevExpress.ui.dxMenuItemTemplate"
+            "DevExpress.ui.dxMenuItem"
           ],
           "ItemComplexTypes": [
             "MenuItem"
@@ -17488,7 +17500,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -17740,7 +17752,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -17804,7 +17816,7 @@
               "PrimitiveTypes": [
                 "string"
               ],
-              "Description": "Specifies a badge text for the navbar item."
+              "Description": "Specifies a badge text for the tab."
             },
             "disabled": {
               "PrimitiveTypes": [
@@ -18400,7 +18412,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -19576,7 +19588,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -23454,7 +23466,7 @@
           "PrimitiveTypes": [
             "boolean"
           ],
-          "Description": "A Boolean value specifying whether or not the main screen is inactive while the widget is active."
+          "Description": "Specifies whether to shade the container when the widget is active."
         },
         "shadingColor": {
           "PrimitiveTypes": [
@@ -23879,7 +23891,7 @@
           "PrimitiveTypes": [
             "boolean"
           ],
-          "Description": "A Boolean value specifying whether or not the main screen is inactive while the widget is active."
+          "Description": "Specifies whether to shade the container when the widget is active."
         },
         "shadingColor": {
           "PrimitiveTypes": [
@@ -24191,6 +24203,7 @@
             "string"
           ],
           "ItemPrimitiveTypes": [
+            "DevExpress.ui.CollectionWidgetItem",
             "any"
           ],
           "IsDataSource": true,
@@ -26402,7 +26415,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -27645,7 +27658,8 @@
           "PrimitiveTypes": [
             "any"
           ],
-          "IsTemplate": true
+          "IsTemplate": true,
+          "Description": "Specifies an appointment collector's custom template."
         },
         "appointmentTemplate": {
           "PrimitiveTypes": [
@@ -27693,7 +27707,8 @@
           "PrimitiveTypes": [
             "Function"
           ],
-          "IsFunc": true
+          "IsFunc": true,
+          "Description": "Customizes the date navigator's text."
         },
         "dataCellTemplate": {
           "PrimitiveTypes": [
@@ -27709,7 +27724,10 @@
             "string"
           ],
           "ItemPrimitiveTypes": [
-            "DevExpress.ui.dxSchedulerAppointmentTemplate"
+            "DevExpress.ui.dxSchedulerAppointment"
+          ],
+          "ItemComplexTypes": [
+            "SchedulerAppointment"
           ],
           "IsDataSource": true,
           "Description": "Specifies the origin of data for the widget."
@@ -27945,6 +27963,15 @@
           "Description": "A function that is executed before an appointment is deleted from the data source."
         },
         "onAppointmentFormCreated": {
+          "PrimitiveTypes": [
+            "Function"
+          ],
+          "IsDeprecated": true,
+          "IsFunc": true,
+          "IsEvent": true,
+          "Description": "Use the onAppointmentFormOpening option instead."
+        },
+        "onAppointmentFormOpening": {
           "PrimitiveTypes": [
             "Function"
           ],
@@ -28229,7 +28256,8 @@
               "PrimitiveTypes": [
                 "any"
               ],
-              "IsTemplate": true
+              "IsTemplate": true,
+              "Description": "Specifies an appointment collector's custom template."
             },
             "appointmentTemplate": {
               "PrimitiveTypes": [
@@ -28566,6 +28594,7 @@
             "string"
           ],
           "ItemPrimitiveTypes": [
+            "DevExpress.ui.CollectionWidgetItem",
             "any"
           ],
           "IsDataSource": true,
@@ -29102,7 +29131,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -30416,7 +30445,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -30700,7 +30729,7 @@
           "PrimitiveTypes": [
             "boolean"
           ],
-          "Description": "A Boolean value that specifies the availability of navigation buttons."
+          "Description": "Specifies whether navigation buttons should be available when tabs exceed the widget's width."
         },
         "swipeEnabled": {
           "PrimitiveTypes": [
@@ -30749,7 +30778,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -31016,7 +31045,7 @@
           "PrimitiveTypes": [
             "boolean"
           ],
-          "Description": "A Boolean value that specifies the availability of navigation buttons."
+          "Description": "Specifies whether navigation buttons should be available when tabs exceed the widget's width."
         },
         "tabIndex": {
           "PrimitiveTypes": [
@@ -31077,6 +31106,7 @@
             "string"
           ],
           "ItemPrimitiveTypes": [
+            "DevExpress.ui.CollectionWidgetItem",
             "any"
           ],
           "IsDataSource": true,
@@ -32291,7 +32321,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -32757,7 +32787,7 @@
           "PrimitiveTypes": [
             "boolean"
           ],
-          "Description": "A Boolean value specifying whether or not the main screen is inactive while the widget is active."
+          "Description": "Specifies whether to shade the container when the widget is active."
         },
         "shadingColor": {
           "PrimitiveTypes": [
@@ -32807,7 +32837,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -32861,6 +32891,12 @@
           "SingularName": "item",
           "Description": "An array of items displayed by the widget.",
           "Options": {
+            "cssClass": {
+              "PrimitiveTypes": [
+                "string"
+              ],
+              "Description": "Specifies a CSS class to be applied to the item."
+            },
             "disabled": {
               "PrimitiveTypes": [
                 "boolean"
@@ -33282,7 +33318,7 @@
           "PrimitiveTypes": [
             "boolean"
           ],
-          "Description": "A Boolean value specifying whether or not the main screen is inactive while the widget is active."
+          "Description": "Specifies whether to shade the container when the widget is active."
         },
         "shadingColor": {
           "PrimitiveTypes": [
@@ -35696,7 +35732,7 @@
             "Function"
           ],
           "IsFunc": true,
-          "Description": "Allows you to load nodes manually."
+          "Description": "Allows you to load nodes. Applies if the dataStructure is \"plain\" and the dataSource and items are undefined."
         },
         "dataSource": {
           "PrimitiveTypes": [
@@ -35706,7 +35742,7 @@
           ],
           "ItemPrimitiveTypes": [
             "string",
-            "DevExpress.ui.CollectionWidgetItemTemplate"
+            "DevExpress.ui.CollectionWidgetItem"
           ],
           "IsDataSource": true,
           "Description": "A data source used to fetch data to be displayed by the widget."
@@ -35814,7 +35850,7 @@
         },
         "items": {
           "ItemPrimitiveTypes": [
-            "DevExpress.ui.dxTreeViewItemTemplate"
+            "DevExpress.ui.dxTreeViewItem"
           ],
           "ItemComplexTypes": [
             "TreeViewItem"
@@ -36453,7 +36489,7 @@
           "Description": "Specifies the geographical coordinates of the center for a map."
         },
         "controlBar": {
-          "Description": "Specifies the options of the control bar.",
+          "Description": "Configures the control bar.",
           "Options": {
             "borderColor": {
               "PrimitiveTypes": [
@@ -39417,7 +39453,8 @@
         "ignoreEmptyValue": {
           "PrimitiveTypes": [
             "boolean"
-          ]
+          ],
+          "Description": "Specifies whether empty values are valid."
         },
         "message": {
           "PrimitiveTypes": [
@@ -39446,7 +39483,8 @@
         "ignoreEmptyValue": {
           "PrimitiveTypes": [
             "boolean"
-          ]
+          ],
+          "Description": "Specifies whether empty values are valid."
         },
         "message": {
           "PrimitiveTypes": [
@@ -39552,7 +39590,7 @@
         },
         "items": {
           "ItemPrimitiveTypes": [
-            "DevExpress.ui.dxContextMenuItemTemplate"
+            "DevExpress.ui.dxContextMenuItem"
           ],
           "ItemComplexTypes": [
             "ContextMenuItem"
@@ -40894,8 +40932,14 @@
       }
     },
     "HtmlEditorToolbarItem": {
-      "Description": "Configures toolbar controls which allow users to format text and execute commands.",
+      "Description": "Configures toolbar controls. These controls allow users to format text and execute commands.",
       "Options": {
+        "cssClass": {
+          "PrimitiveTypes": [
+            "string"
+          ],
+          "Description": "Specifies a CSS class to be applied to the item."
+        },
         "disabled": {
           "PrimitiveTypes": [
             "boolean"
@@ -41038,7 +41082,7 @@
         },
         "items": {
           "ItemPrimitiveTypes": [
-            "DevExpress.ui.dxMenuItemTemplate"
+            "DevExpress.ui.dxMenuItem"
           ],
           "ItemComplexTypes": [
             "MenuItem"
@@ -41077,6 +41121,90 @@
             "boolean"
           ],
           "Description": "Specifies whether or not the menu item is visible."
+        }
+      }
+    },
+    "SchedulerAppointment": {
+      "Description": "This section lists the fields that are used in a default template for scheduler appointments.",
+      "Options": {
+        "allDay": {
+          "PrimitiveTypes": [
+            "boolean"
+          ],
+          "Description": "Specifies whether the appointment lasts all day."
+        },
+        "description": {
+          "PrimitiveTypes": [
+            "string"
+          ],
+          "Description": "Specifies a detail description of the appointment."
+        },
+        "disabled": {
+          "PrimitiveTypes": [
+            "boolean"
+          ],
+          "Description": "Specifies whether or not an appointment must be displayed disabled."
+        },
+        "endDate": {
+          "PrimitiveTypes": [
+            "Date"
+          ],
+          "Description": "Specifies the ending of the appointment."
+        },
+        "endDateTimeZone": {
+          "PrimitiveTypes": [
+            "string"
+          ],
+          "Description": "Specifies the timezone of the appointment end date. Applies only if timeZone is not specified."
+        },
+        "html": {
+          "PrimitiveTypes": [
+            "string"
+          ],
+          "Description": "Specifies HTML code inserted into the appointment element."
+        },
+        "recurrenceException": {
+          "PrimitiveTypes": [
+            "string"
+          ],
+          "Description": "Specifies exceptions for the current recurring appointment."
+        },
+        "recurrenceRule": {
+          "PrimitiveTypes": [
+            "string"
+          ],
+          "Description": "Specifies a recurrence rule for generating recurring appointments in the scheduler."
+        },
+        "startDate": {
+          "PrimitiveTypes": [
+            "Date"
+          ],
+          "Description": "Specifies the start of the appointment."
+        },
+        "startDateTimeZone": {
+          "PrimitiveTypes": [
+            "string"
+          ],
+          "Description": "Specifies the timezone of the appointment start date. Applies only if timeZone is not specified."
+        },
+        "template": {
+          "PrimitiveTypes": [
+            "any"
+          ],
+          "IsTemplate": true,
+          "Description": "Specifies an appointment template that should be used to render this appointment only."
+        },
+        "text": {
+          "PrimitiveTypes": [
+            "string"
+          ],
+          "Description": "Specifies the subject of the appointment."
+        },
+        "visible": {
+          "PrimitiveTypes": [
+            "boolean"
+          ],
+          "Description": "Specifies whether or not an appointment must be displayed."
         }
       }
     },
@@ -41652,7 +41780,7 @@
         },
         "items": {
           "ItemPrimitiveTypes": [
-            "DevExpress.ui.dxTreeViewItemTemplate"
+            "DevExpress.ui.dxTreeViewItem"
           ],
           "ItemComplexTypes": [
             "TreeViewItem"
@@ -41702,7 +41830,8 @@
         "ignoreEmptyValue": {
           "PrimitiveTypes": [
             "boolean"
-          ]
+          ],
+          "Description": "Specifies whether empty values are valid."
         },
         "message": {
           "PrimitiveTypes": [
@@ -41953,7 +42082,8 @@
         "ignoreEmptyValue": {
           "PrimitiveTypes": [
             "boolean"
-          ]
+          ],
+          "Description": "Specifies whether empty values are valid."
         },
         "message": {
           "PrimitiveTypes": [
@@ -41976,7 +42106,8 @@
         "ignoreEmptyValue": {
           "PrimitiveTypes": [
             "boolean"
-          ]
+          ],
+          "Description": "Specifies whether empty values are valid."
         },
         "message": {
           "PrimitiveTypes": [
@@ -44278,7 +44409,8 @@
         "ignoreEmptyValue": {
           "PrimitiveTypes": [
             "boolean"
-          ]
+          ],
+          "Description": "Specifies whether empty values are valid."
         },
         "max": {
           "PrimitiveTypes": [
@@ -44366,7 +44498,8 @@
         "ignoreEmptyValue": {
           "PrimitiveTypes": [
             "boolean"
-          ]
+          ],
+          "Description": "Specifies whether empty values are valid."
         },
         "max": {
           "PrimitiveTypes": [

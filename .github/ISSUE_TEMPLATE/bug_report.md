@@ -26,7 +26,7 @@ You can also find information that can help you to resolve the issue in the foll
     devextreme-angular version:
 
 **Steps to reproduce:**
-<!-- Provide a sample application that illustrates the bug if possible. You can use the following services: 
+<!-- Provide a sample application that illustrates the bug if possible. You can use the following services:
     - GitHub
     - StackBlitz (https://stackblitz.com/edit/angular-c2djgn)
     - Plunker (http://next.plnkr.co/edit/XuAPDd?preview)

@@ -11,14 +11,15 @@ import {
 
 import {
     DxRangeSelectorModule, DxRangeSelectorComponent
-} from '../../../dist';
+} from 'devextreme-angular';
 
 @Component({
     selector: 'test-container-component',
     template: ''
 })
 class TestContainerComponent {
-    value = {startValue: 0, endValue: 10};
+    value = { startValue: 0, endValue: 10 };
+    scale = { startValue: 0, endValue: 10 };
     count = 0;
     @ViewChild('rangeSelector') rangeSelector: DxRangeSelectorComponent;
     onChanged() {
@@ -39,8 +40,8 @@ describe('DxRangeSelector', () => {
         TestBed.overrideComponent(TestContainerComponent, {
             set: {
                 template: `
-                <dx-range-selector (onOptionChanged)="onChanged($event)" [value]="value"></dx-range-selector>
-                <dx-range-selector #rangeSelector [(value)]="value"></dx-range-selector>`
+                <dx-range-selector (onOptionChanged)="onChanged($event)" [scale]="scale" [value]="value"></dx-range-selector>
+                <dx-range-selector #rangeSelector [scale]="scale" [(value)]="value"></dx-range-selector>`
             }
         });
         let fixture = TestBed.createComponent(TestContainerComponent);

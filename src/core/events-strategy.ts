@@ -9,7 +9,7 @@ export class NgEventsStrategy {
     private subscriptions: { [key: string]: IEventSubscription[] } = {};
     private events: { [key: string]: EventEmitter<any> } = {};
 
-    constructor(private instance: any) { }
+    constructor(private instance: any, private zone: NgZone) { }
 
     hasEvent(name: string) {
         return this.getEmitter(name).observers.length !== 0;
@@ -18,17 +18,27 @@ export class NgEventsStrategy {
     fireEvent(name, args) {
         let emitter = this.getEmitter(name);
         if (emitter.observers.length) {
-            emitter.next(args && args[0]);
+            const internalSubs = this.subscriptions[name] || [];
+            if (internalSubs.length === emitter.observers.length)
+                emitter.next(args && args[0]);
+            else
+                this.zone.run(() => emitter.next(args && args[0]));
         }
     }
 
-    on(name, handler) {
-        let eventSubscriptions = this.subscriptions[name] || [],
-            subcription = this.getEmitter(name).subscribe(handler.bind(this.instance)),
-            unsubscribe = subcription.unsubscribe.bind(subcription);
+    on(name: string | Object, handler?: Function) {
+        if (typeof name === 'string') {
+            let eventSubscriptions = this.subscriptions[name] || [],
+                subcription = this.getEmitter(name).subscribe(handler.bind(this.instance)),
+                unsubscribe = subcription.unsubscribe.bind(subcription);
 
-        eventSubscriptions.push({ handler, unsubscribe });
-        this.subscriptions[name] = eventSubscriptions;
+            eventSubscriptions.push({ handler, unsubscribe });
+            this.subscriptions[name] = eventSubscriptions;
+        } else {
+            let handlersObj = name;
+
+            Object.keys(handlersObj).forEach(event => this.on(event, handlersObj[event]));
+        }
     }
 
     off(name, handler) {

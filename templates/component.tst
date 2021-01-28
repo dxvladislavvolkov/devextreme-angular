@@ -1,14 +1,14 @@
 /* tslint:disable:max-line-length */
+<# 
+var collectionProperties = it.properties.filter(item => item.isCollection).map(item => item.name);
+var collectionNestedComponents = it.nestedComponents.filter(item => item.isCollection && item.root);
+var baseClass = it.isExtension ? 'DxComponentExtension' : 'DxComponent';
 
-<# var collectionProperties = it.properties.filter(item => item.isCollection).map(item => item.name); #>
-<# var collectionNestedComponents = it.nestedComponents.filter(item => item.isCollection && item.root); #>
-<# var baseClass = it.isExtension ? 'DxComponentExtension' : 'DxComponent'; #>
+var implementedInterfaces = ['OnDestroy'];
 
-<# var implementedInterfaces = ['OnDestroy']; #>
-
-<# it.isEditor && implementedInterfaces.push('OnInit') && implementedInterfaces.push('AfterViewInit'); #>
-<# it.isEditor && implementedInterfaces.push('ControlValueAccessor'); #>
-<# collectionProperties.length && implementedInterfaces.push('OnChanges', 'DoCheck'); #>
+it.isEditor && implementedInterfaces.push('ControlValueAccessor');
+collectionProperties.length && implementedInterfaces.push('OnChanges', 'DoCheck');
+#>
 
 import { BrowserTransferStateModule } from '@angular/platform-browser';
 import { TransferState } from '@angular/platform-browser';
@@ -23,11 +23,11 @@ import {
 
     Input,
     Output,
-    OnDestroy,
+    OnDestroy,<#? it.isExtension #>
+    SkipSelf,
+    Optional,
+    Host,<#?#>
     EventEmitter<#? it.isEditor #>,
-    OnInit,
-    AfterViewInit,
-    ContentChild,
     forwardRef,
     HostListener<#?#><#? collectionProperties.length #>,
     OnChanges,
@@ -37,29 +37,29 @@ import {
     QueryList<#?#>
 } from '@angular/core';
 
-<#? it.isDevExpressRequired #>
-import DevExpress from 'devextreme/bundles/dx.all';<#?#>
 
+<#? it.imports #><#~ it.imports :file #>import <#= file.importString #> from '<#= file.path #>';
+<#~#><#?#>
 import <#= it.className #> from '<#= it.module #>';
 <#? it.isEditor #>
-import { DxValidatorComponent } from './validator';
-
 import {
     ControlValueAccessor,
     NG_VALUE_ACCESSOR
 } from '@angular/forms';<#?#>
 
-import { <#= baseClass #> } from '../core/component';
-import { DxTemplateHost } from '../core/template-host';
-import { DxIntegrationModule } from '../core/integration';
-import { DxTemplateModule } from '../core/template';
-import { NestedOptionHost } from '../core/nested-option';
-import { WatcherHelper } from '../core/watcher-helper';
-<#? collectionProperties.length #>import { IterableDifferHelper } from '../core/iterable-differ-helper';<#?#>
+import {
+    <#= baseClass #>,
+    DxTemplateHost,
+    DxIntegrationModule,
+    DxTemplateModule,
+    NestedOptionHost,<#? collectionProperties.length #>
+    IterableDifferHelper,<#?#>
+    WatcherHelper
+} from 'devextreme-angular/core';
 
-<#~ it.nestedComponents :component:i #>import { <#= component.className #>Module } from './nested/<#= component.path #>';
+<#~ it.nestedComponents :component:i #>import { <#= component.className #>Module } from '<#= it.packageName #>/ui/nested';
 <#~#>
-<#~ collectionNestedComponents :component:i #>import { <#= component.className #>Component } from './nested/<#= component.path #>';
+<#~ collectionNestedComponents :component:i #>import { <#= component.className #>Component } from '<#= it.packageName #>/ui/nested';
 <#~#>
 
 <#? it.isEditor #>
@@ -69,10 +69,12 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
     useExisting: forwardRef(() => <#= it.className #>Component),
     multi: true
 };<#?#>
-
-<#? it.description #>/**
- * <#= it.description #>
- */<#?#>
+/**
+ * [descr:<#= it.docID #>]
+<#? it.isDeprecated #>
+ * @deprecated [depNote:<#= it.docID #>]
+<#?#>
+ */
 @Component({
     selector: '<#= it.selector #>',
     template: '<#? it.isTranscludedContent #><ng-content></ng-content><#?#>',<#? it.isViz #>
@@ -87,14 +89,13 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 })
 export class <#= it.className #>Component extends <#= baseClass #> <#? implementedInterfaces.length #>implements <#= implementedInterfaces.join(', ') #> <#?#>{
     instance: <#= it.className #>;
-<#? it.isEditor #>
-    @ContentChild(DxValidatorComponent)
-    validator: DxValidatorComponent;
-<#?#>
-<#~ it.properties :prop:i #><#? prop.description #>
+<#~ it.properties :prop:i #>
     /**
-     * <#= prop.description #>
-     */<#?#>
+     * [descr:<#= prop.docID #>]
+    <#? prop.isDeprecated #>
+     * @deprecated [depNote:<#= prop.docID #>]
+    <#?#>
+     */
     @Input()
     get <#= prop.name #>(): <#= prop.type #> {
         return this._getOption('<#= prop.name #>');
@@ -104,10 +105,17 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
     }<#? i < it.properties.length-1 #>
 
 <#?#><#~#>
-<#~ it.events :event:i #><#? event.description #>
+<#~ it.events :event:i #>
     /**
-     * <#= event.description #>
-     */<#?#>
+    <#? event.isInternal #>
+     * This member supports the internal infrastructure and is not intended to be used directly from your code.
+    <#??#>
+     * [descr:<#= event.docID #>]
+    <#? event.isDeprecated #>
+     * @deprecated [depNote:<#= event.docID #>]
+    <#?#>
+    <#?#>
+     */
     @Output() <#= event.emit #>: <#= event.type #>;<#? i < it.events.length-1 #>
 <#?#><#~#>
 
@@ -125,9 +133,15 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
     }
 <#~#>
 
+<#? it.isExtension #>
+    parentElement: any;
+<#?#>
+
     constructor(elementRef: ElementRef, ngZone: NgZone, templateHost: DxTemplateHost,
             <#? collectionProperties.length #>private <#?#>_watcherHelper: WatcherHelper<#? collectionProperties.length #>,
-            private _idh: IterableDifferHelper<#?#>, optionHost: NestedOptionHost,
+            private _idh: IterableDifferHelper<#?#>,<#? it.isExtension #>
+            @SkipSelf() @Optional() @Host() parentOptionHost: NestedOptionHost,<#?#>
+            optionHost: NestedOptionHost,
             transferState: TransferState,
             @Inject(PLATFORM_ID) platformId: any) {
 
@@ -136,15 +150,30 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
         this._createEventEmitters([
             <#~ it.events :event:i #>{ <#? event.subscribe #>subscribe: '<#= event.subscribe #>', <#?#>emit: '<#= event.emit #>' }<#? i < it.events.length-1 #>,
             <#?#><#~#>
-        ]);<#? collectionProperties.length #>
+        ]);<#? it.isExtension #>
+        this.parentElement = this.getParentElement(parentOptionHost);<#?#><#? collectionProperties.length #>
 
         this._idh.setHost(this);<#?#>
         optionHost.setHost(this);
     }
 
     protected _createInstance(element, options) {
+<#? it.isExtension #>
+        if (this.parentElement) {
+            return new DxValidator(this.parentElement, options);
+        }
+<#?#>
         return new <#= it.className #>(element, options);
     }
+<#? it.isExtension #>
+    private getParentElement(host) {
+        if (host) {
+            const parentHost = host.getHost();
+            return (parentHost as any).element.nativeElement;
+        }
+        return;
+    }
+<#?#>
 <#? it.isEditor #>
     writeValue(value: any): void {
         this.eventHelper.lockedValueChangeEvent = true;
@@ -194,19 +223,6 @@ export class <#= it.className #>Component extends <#= baseClass #> <#? implement
 
         if (isSetup || isChanged) {
             super._setOption(name, value);
-        }
-    }<#?#>
-<#? it.isEditor #>
-    ngOnInit() {
-        super.ngOnInit();
-        if (this.validator) {
-            this.validator.createInstanceOnInit = false;
-        }
-    }
-    ngAfterViewInit() {
-        super.ngAfterViewInit();
-        if (this.validator) {
-            this.validator.createInstance(this.element.nativeElement);
         }
     }<#?#>
 }
